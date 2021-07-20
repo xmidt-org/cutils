@@ -8,7 +8,7 @@ Common functions used in the xmidt-org programs.
 
 [![Build Status](https://github.com/xmidt-org/cutils/workflows/CI/badge.svg)](https://github.com/xmidt-org/cutils/actions)
 [![codecov.io](http://codecov.io/github/xmidt-org/cutils/coverage.svg?branch=master)](http://codecov.io/github/xmidt-org/cutils?branch=master)
-[![coverity](https://img.shields.io/coverity/scan/23253.svg)](https://scan.coverity.com/projects/xmidt-org-cutils)
+[![coverity](https://img.shields.io/coverity/scan/23416.svg)](https://scan.coverity.com/projects/xmidt-org-cutils)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xmidt-org_cutils&metric=alert_status)](https://sonarcloud.io/dashboard?id=xmidt-org_cutils)
 [![Language Grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/xmidt-org/cutils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xmidt-org/cutils/context:cpp)
 [![GitHub release](https://img.shields.io/github/release/xmidt-org/cutils.svg)](CHANGELOG.md)
