@@ -145,7 +145,7 @@ static int encode(const struct b64_cfg *cfg, const uint8_t *in, size_t len,
     uint32_t bits = 0;
     int bit_count = 0;
     size_t j = 0;
-    uint8_t *map = (uint8_t *)cfg->enc_map;
+    const uint8_t *map = (const uint8_t *)cfg->enc_map;
 
     for (size_t i = 0; i < len; i++) {
         bits = (bits << 8) | in[i];
