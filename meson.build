@@ -5,7 +5,7 @@
 
 project('cutils', 'c',
         version: '0.0.1',
-        license: ['Apache-2.0'],
+        license: ['Apache-2.0', 'MIT'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])
 
