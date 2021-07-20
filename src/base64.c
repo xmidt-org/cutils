@@ -139,12 +139,13 @@ static size_t get_dec_size(int type, size_t encoded_size)
 }
 
 
-static int encode(const char *map, const uint8_t *in, size_t len,
+static int encode(const struct b64_cfg *cfg, const uint8_t *in, size_t len,
                   uint8_t *out, size_t *out_len)
 {
     uint32_t bits = 0;
     int bit_count = 0;
     size_t j = 0;
+    uint8_t *map = (uint8_t *)cfg->enc_map;
 
     for (size_t i = 0; i < len; i++) {
         bits = (bits << 8) | in[i];
@@ -153,7 +154,7 @@ static int encode(const char *map, const uint8_t *in, size_t len,
         while (6 <= bit_count) {
             bit_count -= 6;
             if (out) {
-                out[j] = (uint8_t)map[0x3f & (bits >> bit_count)];
+                out[j] = map[0x3f & (bits >> bit_count)];
             }
             j++;
         }
@@ -165,7 +166,7 @@ static int encode(const char *map, const uint8_t *in, size_t len,
         bit_count += 8;
         bit_count -= 6;
         if (out) {
-            out[j] = (uint8_t)map[0x3f & (bits >> bit_count)];
+            out[j] = map[0x3f & (bits >> bit_count)];
         }
         j++;
     }
@@ -173,7 +174,7 @@ static int encode(const char *map, const uint8_t *in, size_t len,
     /* Pad */
     while (('\0' != map[64]) && (0x03 & j)) {
         if (out) {
-            out[j] = (uint8_t)map[64];
+            out[j] = map[64];
         }
         j++;
     }
@@ -184,7 +185,7 @@ static int encode(const char *map, const uint8_t *in, size_t len,
 }
 
 
-static int decode(const int8_t *map, const uint8_t *in, size_t len,
+static int decode(const struct b64_cfg *cfg, const uint8_t *in, size_t len,
                   uint8_t *out, size_t *out_len)
 {
 
@@ -212,7 +213,7 @@ static int decode(const int8_t *map, const uint8_t *in, size_t len,
     for (size_t i = 0; i < len; i++) {
         int8_t val;
 
-        val = map[in[i]];
+        val = cfg->dec_map[in[i]];
         if (val < 0) {
             *out_len = 0;
             return -1;
@@ -234,7 +235,9 @@ static int decode(const int8_t *map, const uint8_t *in, size_t len,
 }
 
 
-int process(int opts, int transform_type,
+int process(int opts,
+            size_t (*get_size)(int, size_t),
+            int (*transform)(const struct b64_cfg *, const uint8_t *, size_t, uint8_t *, size_t *out_len),
             const uint8_t *in, size_t in_len, uint8_t **_out, size_t *out_len)
 {
 
@@ -272,11 +275,7 @@ int process(int opts, int transform_type,
     }
 
     /* Figure out the actual size */
-    if (ENCODE == transform_type) {
-        dec_size = get_enc_size(type, in_len);
-    } else {
-        dec_size = get_dec_size(type, in_len);
-    }
+    dec_size = (*get_size)(type, in_len);
     if (!dec_size) {
         *out_len = 0;
         return -2;
@@ -299,11 +298,7 @@ int process(int opts, int transform_type,
         }
     }
 
-    if (ENCODE == transform_type) {
-        rv = encode(b64_data[type].enc_map, in, in_len, out, out_len);
-    } else {
-        rv = decode(b64_data[type].dec_map, in, in_len, out, out_len);
-    }
+    rv = (*transform)(&b64_data[type], in, in_len, out, out_len);
 
     if (alloced_buf) {
         if (0 != rv) {
@@ -325,7 +320,7 @@ int process(int opts, int transform_type,
 int b64_decode(int opts, const void *in, size_t in_len,
                void **out, size_t *out_len)
 {
-    return process(opts, DECODE, (const uint8_t *)in, in_len,
+    return process(opts, get_dec_size, decode, (const uint8_t *)in, in_len,
                    (uint8_t **)out, out_len);
 }
 
@@ -333,6 +328,6 @@ int b64_decode(int opts, const void *in, size_t in_len,
 int b64_encode(int opts, const void *in, size_t in_len,
                char **out, size_t *out_len)
 {
-    return process(opts, ENCODE, (const uint8_t *)in, in_len,
+    return process(opts, get_enc_size, encode, (const uint8_t *)in, in_len,
                    (uint8_t **)out, out_len);
 }
