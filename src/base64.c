@@ -305,10 +305,12 @@ int process(int opts, int transform_type,
         rv = decode(b64_data[type].dec_map, in, in_len, out, out_len);
     }
 
-    if ((0 != rv) && (alloced_buf)) {
-        free(out);
-    } else if (_out && alloced_buf) {
-        *_out = out;
+    if (alloced_buf) {
+        if (0 != rv) {
+            free(out);
+        } else if (_out) {
+            *_out = out;
+        }
     }
 
     return rv;
