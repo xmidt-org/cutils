@@ -18,6 +18,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       # Install the dependent packages
     - name: Install packages
       run: |
