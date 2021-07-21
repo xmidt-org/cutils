@@ -22,11 +22,9 @@ static int get_file_size(FILE *f, size_t *filesize)
         long file_len = 0;
 
         file_len = ftell(f);
-        if (-1 != file_len) {
-            if (0 == fseek(f, 0, SEEK_SET)) {
-                *filesize = (size_t)file_len;
-                return 0;
-            }
+        if ((-1 != file_len) && (0 == fseek(f, 0, SEEK_SET))) {
+            *filesize = (size_t)file_len;
+            return 0;
         }
     }
 
@@ -59,18 +57,21 @@ int freadall(const char *filename, size_t max, void **data, size_t *len)
     }
 
     *len = 0;
-    *data = malloc(file_len);
-    if (*data) {
-        char *p = (char *)*data;
-        size_t want = file_len;
-        size_t have = 0;
+    *data = NULL;
+    if (0 < file_len) {
+        *data = malloc(file_len);
+        if (*data) {
+            char *p = (char *)*data;
+            size_t want = file_len;
+            size_t have = 0;
 
-        while (!feof(f) && (0 < want)) {
-            size_t got = fread(p, 1, want, f);
-            p += got;
-            have += got;
+            while (!feof(f) && (0 < want)) {
+                size_t got = fread(p, 1, want, f);
+                p += got;
+                have += got;
+            }
+            *len = have;
         }
-        *len = have;
     }
     fclose(f);
 
