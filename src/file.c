@@ -69,6 +69,7 @@ int freadall(const char *filename, size_t max, void **data, size_t *len)
                 size_t got = fread(p, 1, want, f);
                 p += got;
                 have += got;
+                want -= got;
             }
             *len = have;
         }
