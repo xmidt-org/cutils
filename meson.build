@@ -36,6 +36,7 @@ install_headers([headers, ver_h], subdir: meson.project_name())
 inc = include_directories(inc_base)
 
 sources = ['src/base64.c',
+           'src/file.c',
            'src/memory.c',
            'src/nl_ctype.c',
            'src/printf.c',
@@ -57,6 +58,7 @@ if not meson.is_subproject()
   cunit_dep = dependency('cunit')
 
   tests = [['test base64',     'test_base64'],
+           ['test file',       'test_file'],
            ['test memory',     'test_memory'],
            ['test printf',     'test_printf'],
            ['test nl_strings', 'test_nl_strings'],
