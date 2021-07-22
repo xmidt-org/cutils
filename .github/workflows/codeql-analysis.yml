@@ -6,6 +6,8 @@ name: LGTM Analysis
 on:
   create:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
