@@ -10,7 +10,7 @@
 #define CUTILS_VERSION_MINOR @cutils_VERSION_MINOR @
 #define CUTILS_VERSION_PATCH @cutils_VERSION_PATCH @
 
-/* This is the numeric version of the curtils version number, meant for easier
+/* This is the numeric version of the cutils version number, meant for easier
  * parsing and comparisons by programs.  The CUTILS_VERSION_NUM define
  * will always follow this syntax:
  *
