@@ -74,6 +74,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: codecov.io workaround
+        working-directory: build
+        run: |
+          rm coverage.xml
+
       - name: Upload Codecov.io
         uses: codecov/codecov-action@v1
         with:
