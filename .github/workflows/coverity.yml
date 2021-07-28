@@ -35,7 +35,8 @@ jobs:
           sudo apt-get -y install valgrind libcunit1 libcunit1-doc libcunit1-dev gcovr
 
       - name: Install Meson
-        run: pip3 install --user meson
+        run: |
+          pip3 install --user 'meson>=0.59'
 
       - name: Make Build Directory
         run: mkdir build

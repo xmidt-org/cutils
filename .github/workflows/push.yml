@@ -38,7 +38,8 @@ jobs:
           pip install codecov
 
       - name: Install Meson
-        run: pip3 install --user meson
+        run: |
+          pip3 install --user 'meson>=0.59'
 
       - name: Make Build Directory
         run: mkdir build
@@ -65,8 +66,7 @@ jobs:
       - name: Merge GCOV Reports for Sonarcloud
         working-directory: build
         run: |
-          #ninja coverage-sonarqube ## for now this isn't supported
-          gcovr --sonarqube coverage.xml -r ..
+          ninja coverage-sonarqube
 
       - name: Upload SonarCloud
         run: |
