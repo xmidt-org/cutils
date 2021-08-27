@@ -141,7 +141,9 @@ char *must_mlvaprintf(size_t *len, const char *format, va_list args)
     char *rv = NULL;
 
     if (!format) {
-        *len = 0;
+        if (len) {
+            *len = 0;
+        }
         return NULL;
     }
 

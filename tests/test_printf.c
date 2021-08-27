@@ -30,6 +30,9 @@ void test_maprintf(void)
 
     got = mlaprintf(&len, NULL);
     CU_ASSERT_FATAL(NULL == got);
+
+    got = mlaprintf(NULL, NULL);
+    CU_ASSERT_FATAL(NULL == got);
 }
 
 
@@ -50,6 +53,9 @@ void test_must_maprintf(void)
     free(got);
 
     got = must_mlaprintf(&len, NULL);
+    CU_ASSERT_FATAL(NULL == got);
+
+    got = must_mlaprintf(NULL, NULL);
     CU_ASSERT_FATAL(NULL == got);
 }
 
