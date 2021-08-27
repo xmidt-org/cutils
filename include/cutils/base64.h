@@ -23,9 +23,10 @@
  *  making sure the output buffer is able to hold all of the data once it is
  *  encoded.
  *
- *  TODO Fix the words
- *  @note: The output buffer must be large enough to handle the encoded payload.
- *  @note: The returned buffer must have free() called to prevent a memory leak.
+ *  @note: If provided, the output buffer must be large enough to handle the
+ *         encoded payload.
+ *  @note: If allocated, the returned buffer must have free() called to prevent
+ *         a memory leak.
  *  @note: The returned buffer is '\0' terminated.
  *  @note: The out_len value is equivalent to strlen() of the returned buffer.
  *
