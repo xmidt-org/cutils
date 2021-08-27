@@ -138,9 +138,16 @@ char *must_mlaprintf(size_t *len, const char *format, ...)
 
 char *must_mlvaprintf(size_t *len, const char *format, va_list args)
 {
-    char *rv = mlvaprintf(len, format, args);
+    char *rv = NULL;
 
-    if (format && !rv) {
+    if (!format) {
+        *len = 0;
+        return NULL;
+    }
+
+    rv = mlvaprintf(len, format, args);
+
+    if (!rv) {
         abort();
     }
 
