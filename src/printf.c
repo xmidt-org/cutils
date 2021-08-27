@@ -42,7 +42,7 @@ char *maprintf(const char *format, ...)
     char *buf = NULL;
 
     va_start(args, format);
-    buf = mvaprintf(format, args);
+    buf = mlvaprintf(NULL, format, args);
     va_end(args);
 
     return buf;
@@ -99,3 +99,51 @@ char *mlvaprintf(size_t *len, const char *format, va_list args)
 
     return buf;
 }
+
+
+/*-- Must versions -----------------------------------------------------------*/
+
+
+char *must_maprintf(const char *format, ...)
+{
+    va_list args;
+    char *buf = NULL;
+
+    va_start(args, format);
+    buf = must_mlvaprintf(NULL, format, args);
+    va_end(args);
+
+    return buf;
+}
+
+
+char *must_mvaprintf(const char *format, va_list args)
+{
+    return must_mlvaprintf(NULL, format, args);
+}
+
+
+char *must_mlaprintf(size_t *len, const char *format, ...)
+{
+    va_list args;
+    char *buf = NULL;
+
+    va_start(args, format);
+    buf = must_mlvaprintf(len, format, args);
+    va_end(args);
+
+    return buf;
+}
+
+
+char *must_mlvaprintf(size_t *len, const char *format, va_list args)
+{
+    char *rv = mlvaprintf(len, format, args);
+
+    if (format && !rv) {
+        abort();
+    }
+
+    return rv;
+}
+

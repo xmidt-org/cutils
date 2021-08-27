@@ -61,12 +61,68 @@ void test_memappend()
 }
 
 
+void test_must_realloc()
+{
+    void *p = NULL;
+
+    CU_ASSERT_FATAL(NULL == must_realloc(NULL, 0));
+
+    /* alloc a new buffer */
+    p = must_realloc(NULL, 10);
+    CU_ASSERT_FATAL(NULL != p);
+
+    /* increase the size of the buffer */
+    p = must_realloc(p, 20);
+    CU_ASSERT_FATAL(NULL != p);
+
+    /* free the buffer */
+    CU_ASSERT_FATAL(NULL == must_realloc(p, 0));
+}
+
+
+void test_must_memdup()
+{
+    void *p = NULL;
+    const char *in = "foobar";
+
+    CU_ASSERT_FATAL(NULL == must_memdup(in, 0));
+    CU_ASSERT_FATAL(NULL == must_memdup(NULL, 0));
+
+    p = must_memdup(in, 6);
+    CU_ASSERT_FATAL(NULL != p);
+
+    CU_ASSERT_NSTRING_EQUAL("foobar", p, 6);
+
+    free(p);
+}
+
+
+void test_must_memappend()
+{
+    void *p = NULL;
+    size_t len = 0;
+
+    CU_ASSERT_FATAL(NULL == must_memappend(&p, &len, NULL, 0));
+
+    CU_ASSERT_FATAL(NULL != must_memappend(&p, &len, "hello", 5));
+    CU_ASSERT_FATAL(5 == len);
+    CU_ASSERT_NSTRING_EQUAL("hello", p, 5);
+
+    CU_ASSERT_FATAL(NULL != must_memappend(&p, &len, ", world", 7));
+    CU_ASSERT_FATAL(12 == len);
+    CU_ASSERT_NSTRING_EQUAL("hello, world", p, 12);
+
+    free(p);
+}
 void add_suites(CU_pSuite *suite)
 {
     *suite = CU_add_suite("memory.c tests", NULL, NULL);
     CU_add_test(*suite, "saferealloc() Tests", test_saferealloc);
     CU_add_test(*suite, "memdup() Tests", test_memdup);
     CU_add_test(*suite, "memappend() Tests", test_memappend);
+    CU_add_test(*suite, "must_realloc() Tests", test_must_realloc);
+    CU_add_test(*suite, "must_memdup() Tests", test_must_memdup);
+    CU_add_test(*suite, "must_memappend() Tests", test_must_memappend);
 }
 
 

@@ -51,4 +51,39 @@ void *memdup(const void *src, size_t len);
  */
 void *memappend(void **buf, size_t *buf_len, const void *src, size_t len);
 
+
+/*-- Must versions -----------------------------------------------------------*/
+
+
+/**
+ *  A version of calloc that always returns a valid pointer from calloc.  If
+ *  for some reason that request fails, abort() is called and the program will
+ *  terminate.
+ */
+void *must_calloc(size_t nmemb, size_t size);
+
+
+/**
+ *  A version of realloc that always returns a valid pointer from realloc.  If
+ *  for some reason that request fails, abort() is called and the program will
+ *  terminate.  NULL can be returned if the size is 0.
+ */
+void *must_realloc(void *ptr, size_t size);
+
+
+/**
+ *  A version of memdup that always returns a valid pointer.  If for some reason
+ *  that request fails, abort() is called and the program will terminate.  NULL
+ *  can be returned if the len is 0.
+ */
+void *must_memdup(const void *src, size_t len);
+
+
+/**
+ *  A version of memappend that always returns a valid pointer.  If for some
+ *  reason that request fails, abort() is called and the program will terminate.
+ *  NULL can be returned if the resulting total length is 0.
+ */
+void *must_memappend(void **buf, size_t *buf_len, const void *src, size_t len);
+
 #endif

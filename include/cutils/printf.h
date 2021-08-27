@@ -18,4 +18,13 @@ char *mvaprintf(const char *format, va_list args);
 char *mlaprintf(size_t *len, const char *format, ...);
 char *mlvaprintf(size_t *len, const char *format, va_list args);
 
+
+/* Versions of printf() that always provide an on demand allocated buffer
+ * that fits the data.  The returned buffer must be called with free().
+ * NULL is never returned, abort() is called instead. */
+char *must_maprintf(const char *format, ...);
+char *must_mvaprintf(const char *format, va_list args);
+char *must_mlaprintf(size_t *len, const char *format, ...);
+char *must_mlvaprintf(size_t *len, const char *format, va_list args);
+
 #endif
