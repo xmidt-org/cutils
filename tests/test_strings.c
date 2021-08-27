@@ -62,12 +62,62 @@ void test_cu_strndup()
 }
 
 
+void test_cu_must_strdup()
+{
+    char *tmp;
+    char *empty = "e";
+
+    CU_ASSERT(NULL == cu_must_strdup(NULL));
+
+    tmp = cu_must_strdup(&empty[1]);
+    CU_ASSERT(NULL != tmp);
+    CU_ASSERT('\0' == *tmp);
+    free(tmp);
+
+    tmp = cu_must_strdup("asdf");
+    CU_ASSERT(NULL != tmp);
+    CU_ASSERT_STRING_EQUAL(tmp, "asdf");
+    free(tmp);
+}
+
+
+void test_cu_must_strndup()
+{
+    char *tmp;
+    char *empty = "e";
+    CU_ASSERT(NULL == cu_must_strndup(NULL, 0));
+
+    tmp = cu_must_strndup(&empty[1], 5);
+    CU_ASSERT(NULL != tmp);
+    CU_ASSERT('\0' == *tmp);
+    free(tmp);
+
+    tmp = cu_must_strndup(&empty[1], 0);
+    CU_ASSERT(NULL == tmp);
+
+    tmp = cu_must_strndup("foo", 0);
+    CU_ASSERT(NULL == tmp);
+
+    tmp = cu_must_strndup("asdf", 12);
+    CU_ASSERT(NULL != tmp);
+    CU_ASSERT_STRING_EQUAL(tmp, "asdf");
+    free(tmp);
+
+    tmp = cu_must_strndup("asdf", 2);
+    CU_ASSERT(NULL != tmp);
+    CU_ASSERT_STRING_EQUAL(tmp, "as");
+    free(tmp);
+}
+
+
 void add_suites(CU_pSuite *suite)
 {
     *suite = CU_add_suite("strings.c tests", NULL, NULL);
     CU_add_test(*suite, "cu_strnlen() Tests", test_cu_strnlen);
     CU_add_test(*suite, "cu_strdup() Tests", test_cu_strdup);
     CU_add_test(*suite, "cu_strndup() Tests", test_cu_strndup);
+    CU_add_test(*suite, "cu_must_strdup() Tests", test_cu_must_strdup);
+    CU_add_test(*suite, "cu_must_strndup() Tests", test_cu_must_strndup);
 }
 
 

@@ -13,4 +13,11 @@ size_t cu_strnlen(const char *s, size_t maxlen);
 char *cu_strdup(const char *s);
 char *cu_strndup(const char *s, size_t maxlen);
 
+/**
+ * 'must' versions of the above functions that will not return NULL as an
+ * error.
+ */
+char *cu_must_strdup(const char *s);
+char *cu_must_strndup(const char *s, size_t maxlen);
+
 #endif
