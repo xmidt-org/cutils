@@ -40,24 +40,26 @@
 #include "hashmap.h"
 
 #define HASHMAP_MAX_CHAIN_LENGTH (8)
+#define HASHMAP_MAX_SIZE (1 << 31) /* Up to 2G entries work */
 
 /*----------------------------------------------------------------------------*/
 /*                            Function Prototypes                             */
 /*----------------------------------------------------------------------------*/
 static uint32_t hashmap_crc32_helper(const char *const s,
                                      const size_t len);
-static uint32_t hashmap_hash_helper_int_helper(const struct hashmap_s *const m,
+static uint32_t hashmap_hash_helper_int_helper(const hashmap_t *const m,
                                                const char *const keystring,
                                                const size_t len);
-static int hashmap_match_helper(const struct hashmap_element_s *const element,
+static int hashmap_match_helper(const struct hashmap_element *const element,
                                 const char *const key,
                                 const size_t len);
-static int hashmap_hash_helper(const struct hashmap_s *const m,
+static int hashmap_hash_helper(const hashmap_t *const m,
                                const char *const key, const size_t len,
                                uint32_t *const out_index);
 static int hashmap_rehash_iterator(void *const new_hash,
-                                   struct hashmap_element_s *const e);
-static int hashmap_rehash_helper(struct hashmap_s *const m);
+                                   struct hashmap_element *const e);
+static int hashmap_rehash_helper(hashmap_t *const m);
+static size_t num_to_pow2(size_t num);
 
 
 /*----------------------------------------------------------------------------*/
@@ -65,17 +67,23 @@ static int hashmap_rehash_helper(struct hashmap_s *const m);
 /*----------------------------------------------------------------------------*/
 
 
-int hashmap_create(const size_t initial_size,
-                   struct hashmap_s *const out_hashmap)
+int hashmap_create(size_t initial_size, hashmap_t *const out_hashmap)
 {
     out_hashmap->table_size = initial_size;
     out_hashmap->size = 0;
 
-    if (0 == initial_size || 0 != (initial_size & (initial_size - 1))) {
+    /* Only exit if the number is too large. */
+    if (HASHMAP_MAX_SIZE < initial_size) {
         return 1;
     }
 
-    out_hashmap->data = calloc(initial_size, sizeof(struct hashmap_element_s));
+    /* Simplify and assume there will be 1 vs. failing and returning. */
+    if (0 == initial_size) {
+        initial_size = 1;
+    }
+    initial_size = num_to_pow2(initial_size);
+
+    out_hashmap->data = calloc(initial_size, sizeof(struct hashmap_element));
     if (!out_hashmap->data) {
         return 1;
     }
@@ -84,8 +92,8 @@ int hashmap_create(const size_t initial_size,
 }
 
 
-int hashmap_put(struct hashmap_s *const m, const char *const key,
-                const size_t len, void *const value)
+int hashmap_put(hashmap_t *const m, const char *const key,
+                size_t len, void *const value)
 {
     uint32_t index = 0;
 
@@ -112,8 +120,7 @@ int hashmap_put(struct hashmap_s *const m, const char *const key,
 }
 
 
-void *hashmap_get(const struct hashmap_s *const m, const char *const key,
-                  const size_t len)
+void *hashmap_get(const hashmap_t *const m, const char *const key, size_t len)
 {
     size_t curr;
 
@@ -136,8 +143,7 @@ void *hashmap_get(const struct hashmap_s *const m, const char *const key,
 }
 
 
-int hashmap_remove(struct hashmap_s *const m, const char *const key,
-                   const size_t len)
+int hashmap_remove(hashmap_t *const m, const char *const key, size_t len)
 {
     size_t curr;
 
@@ -149,7 +155,7 @@ int hashmap_remove(struct hashmap_s *const m, const char *const key,
         if (m->data[curr].in_use) {
             if (hashmap_match_helper(&m->data[curr], key, len)) {
                 /* Blank out the fields including in_use */
-                memset(&m->data[curr], 0, sizeof(struct hashmap_element_s));
+                memset(&m->data[curr], 0, sizeof(struct hashmap_element));
 
                 /* Reduce the size */
                 m->size--;
@@ -165,9 +171,9 @@ int hashmap_remove(struct hashmap_s *const m, const char *const key,
 }
 
 
-const char *hashmap_remove_and_return_key(struct hashmap_s *const m,
+const char *hashmap_remove_and_return_key(hashmap_t *const m,
                                           const char *const key,
-                                          const size_t len)
+                                          size_t len)
 {
     size_t curr;
 
@@ -198,7 +204,7 @@ const char *hashmap_remove_and_return_key(struct hashmap_s *const m,
 }
 
 
-int hashmap_iterate(const struct hashmap_s *const m,
+int hashmap_iterate(const hashmap_t *const m,
                     int (*f)(void *const, void *const), void *const context)
 {
     /* Linear probing */
@@ -213,22 +219,21 @@ int hashmap_iterate(const struct hashmap_s *const m,
 }
 
 
-int hashmap_iterate_pairs(struct hashmap_s *const hashmap,
-                          int (*f)(void *const,
-                                   struct hashmap_element_s *const),
+int hashmap_iterate_pairs(hashmap_t *const m,
+                          int (*f)(void *const, struct hashmap_element *const),
                           void *const context)
 {
     /* Linear probing */
-    for (size_t i = 0; i < hashmap->table_size; i++) {
-        struct hashmap_element_s *p = &hashmap->data[i];
+    for (size_t i = 0; i < m->table_size; i++) {
+        struct hashmap_element *p = &m->data[i];
 
         if (p->in_use) {
             int r = f(context, p);
 
             switch (r) {
             case -1: /* remove item */
-                memset(p, 0, sizeof(struct hashmap_element_s));
-                hashmap->size--;
+                memset(p, 0, sizeof(struct hashmap_element));
+                m->size--;
                 break;
             case 0: /* continue iterating */
                 break;
@@ -241,14 +246,14 @@ int hashmap_iterate_pairs(struct hashmap_s *const hashmap,
 }
 
 
-void hashmap_destroy(struct hashmap_s *const m)
+void hashmap_destroy(hashmap_t *const m)
 {
     free(m->data);
-    memset(m, 0, sizeof(struct hashmap_s));
+    memset(m, 0, sizeof(hashmap_t));
 }
 
 
-size_t hashmap_num_entries(const struct hashmap_s *const m)
+size_t hashmap_num_entries(const hashmap_t *const m)
 {
     return m->size;
 }
@@ -326,7 +331,7 @@ static uint32_t hashmap_crc32_helper(const char *const s, const size_t len)
 }
 
 
-static uint32_t hashmap_hash_helper_int_helper(const struct hashmap_s *const m,
+static uint32_t hashmap_hash_helper_int_helper(const hashmap_t *const m,
                                                const char *const keystring,
                                                const size_t len)
 {
@@ -349,14 +354,14 @@ static uint32_t hashmap_hash_helper_int_helper(const struct hashmap_s *const m,
 }
 
 
-static int hashmap_match_helper(const struct hashmap_element_s *const element,
+static int hashmap_match_helper(const struct hashmap_element *const element,
                                 const char *const key, const size_t len)
 {
     return (element->key_len == len) && (0 == memcmp(element->key, key, len));
 }
 
 
-static int hashmap_hash_helper(const struct hashmap_s *const m, const char *const key,
+static int hashmap_hash_helper(const hashmap_t *const m, const char *const key,
                                const size_t len, uint32_t *const out_index)
 {
     unsigned int start, curr;
@@ -406,10 +411,9 @@ static int hashmap_hash_helper(const struct hashmap_s *const m, const char *cons
 
 
 static int hashmap_rehash_iterator(void *const new_hash,
-                                   struct hashmap_element_s *const e)
+                                   struct hashmap_element *const e)
 {
-    int temp = hashmap_put((struct hashmap_s *)new_hash, e->key,
-                           e->key_len, e->data);
+    int temp = hashmap_put((hashmap_t *)new_hash, e->key, e->key_len, e->data);
     if (0 < temp) {
         return 1;
     }
@@ -421,12 +425,12 @@ static int hashmap_rehash_iterator(void *const new_hash,
 /*
  * Doubles the size of the hashmap, and rehashes all the elements
  */
-static int hashmap_rehash_helper(struct hashmap_s *const m)
+static int hashmap_rehash_helper(hashmap_t *const m)
 {
     /* If this multiplication overflows hashmap_create will fail. */
     size_t new_size = 2 * m->table_size;
 
-    struct hashmap_s new_hash;
+    hashmap_t new_hash;
 
     int flag = hashmap_create(new_size, &new_hash);
 
@@ -443,7 +447,30 @@ static int hashmap_rehash_helper(struct hashmap_s *const m)
 
     hashmap_destroy(m);
     /* put new hash into old hash structure by copying */
-    memcpy(m, &new_hash, sizeof(struct hashmap_s));
+    memcpy(m, &new_hash, sizeof(hashmap_t));
 
     return 0;
+}
+
+
+/**
+ * Figure out the power of 2 size that fits the ask.
+ *
+ * https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+ *
+ * @param num The number to find the next higher ^2 that fits
+ *
+ * @return The ^2 number that fits the desired number
+ */
+static size_t num_to_pow2(size_t n)
+{
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n++;
+
+    return n;
 }

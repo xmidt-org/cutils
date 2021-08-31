@@ -21,24 +21,30 @@ static int set_context(void *const context, void *const element)
 
 void test_create()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
     CU_ASSERT(0 == hashmap_create(1, &h));
     hashmap_destroy(&h);
 }
 
+extern size_t num_to_pow2(size_t);
 
 void test_create_boundary()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
-    CU_ASSERT(0 != hashmap_create(0, &h));
-    CU_ASSERT(0 != hashmap_create(3, &h));
+    CU_ASSERT(0 == hashmap_create(0, &h));
+    hashmap_destroy(&h);
+
+    CU_ASSERT(0 == hashmap_create(3, &h));
+    hashmap_destroy(&h);
+
+    CU_ASSERT(0 != hashmap_create(0x80000001, &h));
 }
 
 void test_put()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     int y = 13;
 
@@ -53,7 +59,7 @@ void test_put()
 
 void test_put_twice()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     int y = 13;
 
@@ -70,7 +76,7 @@ void test_put_twice()
 
 void test_get_exists()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     int *y;
 
@@ -85,7 +91,7 @@ void test_get_exists()
 
 void test_get_does_not_exists()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(NULL == hashmap_get(&h, "foo", 3));
@@ -96,7 +102,7 @@ void test_get_does_not_exists()
 
 void test_remove()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(0 == hashmap_put(&h, "foo", 3, &x));
@@ -110,7 +116,7 @@ void test_remove_and_return_key()
      * used later. */
     const char *const key = "foo&bar";
 
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
 
     CU_ASSERT(0 == hashmap_create(1, &h));
@@ -133,7 +139,7 @@ static int early_exit(void *const context, void *const element)
 
 void test_iterate_early_exit()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x[27] = { 0 };
     int total = 0;
     char s[27];
@@ -177,7 +183,7 @@ static int all(void *const context, void *const element)
 
 void test_iterate_all()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x[27] = { 0 };
     int total = 0;
     char s[27];
@@ -206,7 +212,7 @@ void test_iterate_all()
 
 void test_num_entries()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(0 == hashmap_num_entries(&h));
@@ -217,7 +223,7 @@ void test_num_entries()
     hashmap_destroy(&h);
 }
 
-static int rem_all(void *context, struct hashmap_element_s *e)
+static int rem_all(void *context, struct hashmap_element *e)
 {
     (*(int *)context) += e->key_len;
     return -1;
@@ -225,7 +231,7 @@ static int rem_all(void *context, struct hashmap_element_s *e)
 
 void test_remove_all()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x[27] = { 0 };
     int total = 0;
     char s[27];
@@ -251,7 +257,7 @@ void test_remove_all()
 
 void test_hash_conflict()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
     int x = 42;
     int y = 13;
@@ -280,7 +286,7 @@ void test_hash_conflict()
 
 void test_issue_20()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     const char *key = "192.168.2.2hv_api.udache.com/abc/def";
     unsigned int len = sizeof(key) - 1;
 
@@ -300,7 +306,7 @@ void test_issue_20()
 
 void simple_test()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int z = 5;
     int y = 4;
     int x = 3;

@@ -38,7 +38,7 @@
 #include <stdlib.h>
 
 /* We need to keep keys and values. */
-struct hashmap_element_s {
+struct hashmap_element {
     const char *key;
     size_t key_len;
     int in_use;
@@ -47,23 +47,23 @@ struct hashmap_element_s {
 
 /* A hashmap has some maximum size and current size, as well as the data to
  * hold. */
-struct hashmap_s {
+typedef struct {
     size_t table_size;
     size_t size;
-    struct hashmap_element_s *data;
-};
+    struct hashmap_element *data;
+} hashmap_t;
 
 
 /**
  *  Create a hashmap.
  *
- *  @param initial_size The initial size of the hashmap. **Must be a power of two.**
+ *  @param initial_size The initial size of the hashmap.
  *  @param out_hashmap  The storage for the created hashmap.
  *
  *  @return On success 0 is returned.
+ *          If too large or memory failure non-zero is returned.
  */
-int hashmap_create(const size_t initial_size,
-                   struct hashmap_s *const out_hashmap);
+int hashmap_create(size_t initial_size, hashmap_t *const out_hashmap);
 
 
 /**
@@ -80,8 +80,8 @@ int hashmap_create(const size_t initial_size,
  *
  *  @return On success 0 is returned.
  */
-int hashmap_put(struct hashmap_s *const hashmap, const char *const key,
-                const size_t len, void *const value);
+int hashmap_put(hashmap_t *const hashmap, const char *const key,
+                size_t len, void *const value);
 
 
 /**
@@ -93,8 +93,8 @@ int hashmap_put(struct hashmap_s *const hashmap, const char *const key,
  *
  *  @return The previously set element, or NULL if none exists.
  */
-void *hashmap_get(const struct hashmap_s *const hashmap,
-                  const char *const key, const size_t len);
+void *hashmap_get(const hashmap_t *const hashmap,
+                  const char *const key, size_t len);
 
 
 /**
@@ -106,12 +106,13 @@ void *hashmap_get(const struct hashmap_s *const hashmap,
  *
  *  @return On success 0 is returned.
  */
-int hashmap_remove(struct hashmap_s *const hashmap,
-                   const char *const key, const size_t len);
+int hashmap_remove(hashmap_t *const hashmap,
+                   const char *const key, size_t len);
 
 
 /**
- *  Remove an element from the hashmap.
+ *  Remove an element from the hashmap and return the key.  This call provides
+ *  a way to get the key back so it can be freed.
  *
  *  @param hashmap The hashmap to remove from.
  *  @param key     The string key to use.
@@ -120,8 +121,8 @@ int hashmap_remove(struct hashmap_s *const hashmap,
  *  @return On success the original stored key pointer is returned,
  *          on failure NULL is returned.
  */
-const char *hashmap_remove_and_return_key(struct hashmap_s *const hashmap,
-                                          const char *const key, const size_t len);
+const char *hashmap_remove_and_return_key(hashmap_t *const hashmap,
+                                          const char *const key, size_t len);
 
 
 /**
@@ -134,7 +135,7 @@ const char *hashmap_remove_and_return_key(struct hashmap_s *const hashmap,
  *  @return If the entire hashmap was iterated then 0 is returned. Otherwise if
  *          the callback function f returned non-zero then non-zero is returned.
  */
-int hashmap_iterate(const struct hashmap_s *const hashmap,
+int hashmap_iterate(const hashmap_t *const hashmap,
                     int (*f)(void *const context, void *const value),
                     void *const context);
 
@@ -152,8 +153,8 @@ int hashmap_iterate(const struct hashmap_s *const hashmap,
  *          If the callback function returns -1, the current item is removed
  *              and iteration continues.
  */
-int hashmap_iterate_pairs(struct hashmap_s *const hashmap,
-                          int (*f)(void *const, struct hashmap_element_s *const),
+int hashmap_iterate_pairs(hashmap_t *const hashmap,
+                          int (*f)(void *const, struct hashmap_element *const),
                           void *const context);
 
 
@@ -164,7 +165,7 @@ int hashmap_iterate_pairs(struct hashmap_s *const hashmap,
  *
  *  @return The size of the hashmap.
  */
-size_t hashmap_num_entries(const struct hashmap_s *const hashmap);
+size_t hashmap_num_entries(const hashmap_t *const hashmap);
 
 
 /**
@@ -172,7 +173,7 @@ size_t hashmap_num_entries(const struct hashmap_s *const hashmap);
  *
  * @param hashmap The hashmap to destroy.
  */
-void hashmap_destroy(struct hashmap_s *const hashmap);
+void hashmap_destroy(hashmap_t *const hashmap);
 
 
 #endif
