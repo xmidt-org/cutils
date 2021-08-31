@@ -349,15 +349,15 @@ static uint32_t hashmap_hash_helper_int_helper(const struct hashmap_s *const m,
 }
 
 
-int hashmap_match_helper(const struct hashmap_element_s *const element,
-                         const char *const key, const size_t len)
+static int hashmap_match_helper(const struct hashmap_element_s *const element,
+                                const char *const key, const size_t len)
 {
     return (element->key_len == len) && (0 == memcmp(element->key, key, len));
 }
 
 
-int hashmap_hash_helper(const struct hashmap_s *const m, const char *const key,
-                        const size_t len, uint32_t *const out_index)
+static int hashmap_hash_helper(const struct hashmap_s *const m, const char *const key,
+                               const size_t len, uint32_t *const out_index)
 {
     unsigned int start, curr;
     int total_in_use;
@@ -405,8 +405,8 @@ int hashmap_hash_helper(const struct hashmap_s *const m, const char *const key,
 }
 
 
-int hashmap_rehash_iterator(void *const new_hash,
-                            struct hashmap_element_s *const e)
+static int hashmap_rehash_iterator(void *const new_hash,
+                                   struct hashmap_element_s *const e)
 {
     int temp = hashmap_put((struct hashmap_s *)new_hash, e->key,
                            e->key_len, e->data);
@@ -421,10 +421,10 @@ int hashmap_rehash_iterator(void *const new_hash,
 /*
  * Doubles the size of the hashmap, and rehashes all the elements
  */
-int hashmap_rehash_helper(struct hashmap_s *const m)
+static int hashmap_rehash_helper(struct hashmap_s *const m)
 {
     /* If this multiplication overflows hashmap_create will fail. */
-    unsigned new_size = 2 * m->table_size;
+    size_t new_size = 2 * m->table_size;
 
     struct hashmap_s new_hash;
 
