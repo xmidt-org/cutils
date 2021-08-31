@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2020 none */
+/* SPDX-FileCopyrightText: 2020 Neil Henning, et. al*/
 /* SPDX-License-Identifier: Unlicense */
 
 /*
@@ -248,13 +248,6 @@ void test_remove_all()
     hashmap_destroy(&h);
 }
 
-// Define a global function that uses the crc32 helper so we can test it against
-// the SSE 4.2 version.
-unsigned crc32_scalar(const char *const s, const unsigned len);
-unsigned crc32_scalar(const char *const s, const unsigned len)
-{
-    return hashmap_crc32_helper(s, len);
-}
 
 void test_hash_conflict()
 {
