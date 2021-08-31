@@ -37,6 +37,7 @@ inc = include_directories(inc_base)
 
 sources = ['src/base64.c',
            'src/file.c',
+           'src/hashmap.c',
            'src/memory.c',
            'src/nl_ctype.c',
            'src/printf.c',
@@ -59,6 +60,7 @@ if not meson.is_subproject()
 
   tests = [['test base64',     'test_base64'],
            ['test file',       'test_file'],
+           ['test hashmap',    'test_hashmap'],
            ['test memory',     'test_memory'],
            ['test printf',     'test_printf'],
            ['test nl_strings', 'test_nl_strings'],
