@@ -38,6 +38,7 @@ inc = include_directories(inc_base)
 sources = ['src/base64.c',
            'src/file.c',
            'src/hashmap.c',
+           'src/hashmap_crc.c',
            'src/memory.c',
            'src/nl_ctype.c',
            'src/printf.c',
@@ -58,14 +59,15 @@ if not meson.is_subproject()
 
   cunit_dep = dependency('cunit')
 
-  tests = [['test base64',     'test_base64'],
-           ['test file',       'test_file'],
-           ['test hashmap',    'test_hashmap'],
-           ['test memory',     'test_memory'],
-           ['test printf',     'test_printf'],
-           ['test nl_strings', 'test_nl_strings'],
-           ['test strings',    'test_strings'],
-           ['test xxd',        'test_xxd']]
+  tests = [['test base64',            'test_base64'],
+           ['test file',              'test_file'],
+           ['test hashmap',           'test_hashmap'],
+           ['test hashmap collision', 'test_hashmap_collision'],
+           ['test memory',            'test_memory'],
+           ['test printf',            'test_printf'],
+           ['test nl_strings',        'test_nl_strings'],
+           ['test strings',           'test_strings'],
+           ['test xxd',               'test_xxd']]
 
   foreach test : tests
     test(test[0],

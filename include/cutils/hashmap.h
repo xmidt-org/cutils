@@ -57,11 +57,14 @@ typedef struct {
 /**
  *  Create a hashmap.
  *
+ *  Optional if the hashmap_t object is set to zero.
+ *
  *  @param initial_size The initial size of the hashmap.
  *  @param out_hashmap  The storage for the created hashmap.
  *
  *  @return On success 0 is returned.
- *          If too large or memory failure non-zero is returned.
+ *          -1 is returned if an input is invalid
+ *          -2 is returned if there was a memory failure
  */
 int hashmap_create(size_t initial_size, hashmap_t *const out_hashmap);
 
@@ -79,6 +82,9 @@ int hashmap_create(size_t initial_size, hashmap_t *const out_hashmap);
  *  @param value   The value to insert.
  *
  *  @return On success 0 is returned.
+ *          -1 is returned if the input is invalid
+ *          -2 is returned if there was a memory failure
+ *          -3 is returned if there was not space due to hash collisions
  */
 int hashmap_put(hashmap_t *const hashmap, const char *const key,
                 size_t len, void *const value);
@@ -104,7 +110,8 @@ void *hashmap_get(const hashmap_t *const hashmap,
  *  @param key     The string key to use.
  *  @param len     The length of the string key.
  *
- *  @return On success 0 is returned.
+ *  @return 0 is returned if the element was removed
+ *          1 is returned if no element was found to remove
  */
 int hashmap_remove(hashmap_t *const hashmap,
                    const char *const key, size_t len);
@@ -126,7 +133,7 @@ const char *hashmap_remove_and_return_key(hashmap_t *const hashmap,
 
 
 /**
- *  Iterate over all the elements in a hashmap.
+ *  Iterate over all the values in a hashmap.
  *
  *  @param hashmap The hashmap to iterate over.
  *  @param f       The function pointer to call on each element.
@@ -154,7 +161,7 @@ int hashmap_iterate(const hashmap_t *const hashmap,
  *              and iteration continues.
  */
 int hashmap_iterate_pairs(hashmap_t *const hashmap,
-                          int (*f)(void *const, struct hashmap_element *const),
+                          int (*f)(void *const context, struct hashmap_element *const),
                           void *const context);
 
 
