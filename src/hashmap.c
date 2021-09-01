@@ -409,7 +409,11 @@ static int hashmap_rehash_helper(hashmap_t *const m)
     int rv = 0;
     hashmap_t new_hash;
 
-    if ((2 * m->size) < m->table_size) {
+    /* If the hashmap is less than 75% full and we had a collision, then
+     * instead of increasing the number of buckets, we should fail out.
+     * This helps prevent run-away allocations due to a non-ideal hashing
+     * algorithm.*/
+    if (m->size < (3 * (m->table_size / 4))) {
         return -3;
     }
 
