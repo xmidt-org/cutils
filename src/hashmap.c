@@ -58,7 +58,7 @@ static int hashmap_match_helper(const struct hashmap_element *const element,
                                 const size_t len);
 static int hashmap_hash_helper(const hashmap_t *const m,
                                const char *const key, const size_t len,
-                               uint32_t *const out_index);
+                               size_t *const out_index);
 static int hashmap_rehash_iterator(void *const new_hash,
                                    struct hashmap_element *const e);
 static int hashmap_rehash_helper(hashmap_t *const m);
@@ -98,8 +98,7 @@ int hashmap_create(size_t initial_size, hashmap_t *const out_hashmap)
 int hashmap_put(hashmap_t *const m, const char *const key,
                 size_t len, void *const value)
 {
-    uint32_t index = 0;
-    int rv = 0;
+    size_t index = 0;
 
     if (!m) {
         return -1;
@@ -115,7 +114,7 @@ int hashmap_put(hashmap_t *const m, const char *const key,
 
     /* Find a place to put our value. */
     while (!hashmap_hash_helper(m, key, len, &index)) {
-        rv = hashmap_rehash_helper(m);
+        int rv = hashmap_rehash_helper(m);
         if (rv) {
             return rv;
         }
@@ -343,7 +342,7 @@ static int hashmap_match_helper(const struct hashmap_element *const element,
 
 
 static int hashmap_hash_helper(const hashmap_t *const m, const char *const key,
-                               const size_t len, uint32_t *const out_index)
+                               const size_t len, size_t *const out_index)
 {
     size_t curr = 0;
     size_t first_empty = SIZE_MAX;
