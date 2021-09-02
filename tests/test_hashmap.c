@@ -6,6 +6,7 @@
  * and modified to work in this build ecosystem.
  */
 #include <CUnit/Basic.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +22,7 @@ static int set_context(void *const context, void *const element)
 
 void test_create()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
     CU_ASSERT(0 == hashmap_create(1, &h));
     hashmap_destroy(&h);
@@ -30,15 +31,20 @@ void test_create()
 
 void test_create_boundary()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
-    CU_ASSERT(0 != hashmap_create(0, &h));
-    CU_ASSERT(0 != hashmap_create(3, &h));
+    CU_ASSERT(0 == hashmap_create(0, &h));
+    hashmap_destroy(&h);
+
+    CU_ASSERT(0 == hashmap_create(3, &h));
+    hashmap_destroy(&h);
+
+    CU_ASSERT(0 != hashmap_create(0x80000001, &h));
 }
 
 void test_put()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     int y = 13;
 
@@ -53,7 +59,7 @@ void test_put()
 
 void test_put_twice()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     int y = 13;
 
@@ -70,7 +76,7 @@ void test_put_twice()
 
 void test_get_exists()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     int *y;
 
@@ -85,7 +91,7 @@ void test_get_exists()
 
 void test_get_does_not_exists()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(NULL == hashmap_get(&h, "foo", 3));
@@ -96,7 +102,7 @@ void test_get_does_not_exists()
 
 void test_remove()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(0 == hashmap_put(&h, "foo", 3, &x));
@@ -104,13 +110,14 @@ void test_remove()
     hashmap_destroy(&h);
 }
 
+
 void test_remove_and_return_key()
 {
     /* The '&bar' portion of the string just uniques the constant from the 'foo'
      * used later. */
     const char *const key = "foo&bar";
 
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
 
     CU_ASSERT(0 == hashmap_create(1, &h));
@@ -133,7 +140,7 @@ static int early_exit(void *const context, void *const element)
 
 void test_iterate_early_exit()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x[27] = { 0 };
     int total = 0;
     char s[27];
@@ -175,9 +182,10 @@ static int all(void *const context, void *const element)
     return 1;
 }
 
+
 void test_iterate_all()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x[27] = { 0 };
     int total = 0;
     char s[27];
@@ -204,9 +212,10 @@ void test_iterate_all()
     hashmap_destroy(&h);
 }
 
+
 void test_num_entries()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x = 42;
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(0 == hashmap_num_entries(&h));
@@ -217,15 +226,17 @@ void test_num_entries()
     hashmap_destroy(&h);
 }
 
-static int rem_all(void *context, struct hashmap_element_s *e)
+
+static int rem_all(void *context, struct hashmap_element *e)
 {
     (*(int *)context) += e->key_len;
     return -1;
 }
 
+
 void test_remove_all()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int x[27] = { 0 };
     int total = 0;
     char s[27];
@@ -249,9 +260,75 @@ void test_remove_all()
 }
 
 
+static int walk_all(void *context, struct hashmap_element *e)
+{
+    (*(int *)context) += e->key_len;
+    return 0;
+}
+
+
+void test_walk_all()
+{
+    hashmap_t h;
+    int x[27] = { 0 };
+    int total = 0;
+    char s[27];
+    char c;
+
+    CU_ASSERT(0 == hashmap_create(16, &h));
+
+    for (c = 'a'; c <= 'z'; c++) {
+        s[c - 'a'] = c;
+    }
+
+    for (c = 'a'; c <= 'z'; c++) {
+        const int index = c - 'a';
+        CU_ASSERT(0 == hashmap_put(&h, s + index, 1, x + index));
+    }
+    CU_ASSERT(26 == hashmap_num_entries(&h));
+    CU_ASSERT(0 == hashmap_iterate_pairs(&h, walk_all, &total));
+    CU_ASSERT(26 == total);
+    CU_ASSERT(26 == hashmap_num_entries(&h));
+    hashmap_destroy(&h);
+}
+
+
+static int walk_one(void *context, struct hashmap_element *e)
+{
+    (*(int *)context) += e->key_len;
+    return 1;
+}
+
+
+void test_walk_one()
+{
+    hashmap_t h;
+    int x[27] = { 0 };
+    int total = 0;
+    char s[27];
+    char c;
+
+    CU_ASSERT(0 == hashmap_create(16, &h));
+
+    for (c = 'a'; c <= 'z'; c++) {
+        s[c - 'a'] = c;
+    }
+
+    for (c = 'a'; c <= 'z'; c++) {
+        const int index = c - 'a';
+        CU_ASSERT(0 == hashmap_put(&h, s + index, 1, x + index));
+    }
+    CU_ASSERT(26 == hashmap_num_entries(&h));
+    CU_ASSERT(1 == hashmap_iterate_pairs(&h, walk_one, &total));
+    CU_ASSERT(1 == total);
+    CU_ASSERT(26 == hashmap_num_entries(&h));
+    hashmap_destroy(&h);
+}
+
+
 void test_hash_conflict()
 {
-    struct hashmap_s h;
+    hashmap_t h;
 
     int x = 42;
     int y = 13;
@@ -278,9 +355,10 @@ void test_hash_conflict()
     hashmap_destroy(&h);
 }
 
+
 void test_issue_20()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     const char *key = "192.168.2.2hv_api.udache.com/abc/def";
     unsigned int len = sizeof(key) - 1;
 
@@ -300,7 +378,7 @@ void test_issue_20()
 
 void simple_test()
 {
-    struct hashmap_s h;
+    hashmap_t h;
     int z = 5;
     int y = 4;
     int x = 3;
@@ -318,8 +396,84 @@ void simple_test()
     got = hashmap_get(&h, "foobar", 6);
     CU_ASSERT(*got == 3);
 
+    CU_ASSERT(0 == hashmap_remove(&h, "foo", 3));
+    CU_ASSERT(1 == hashmap_remove(&h, "foo", 3));
+
+    CU_ASSERT(NULL != hashmap_remove_and_return_key(&h, "bar", 3));
+    CU_ASSERT(NULL == hashmap_remove_and_return_key(&h, "bar", 3));
+
     hashmap_destroy(&h);
 }
+
+
+int empty_iterate(void *const context, void *const value)
+{
+    (void)context;
+    (void)value;
+
+    return 0;
+}
+
+
+int empty_iterate_e(void *const context, struct hashmap_element *const e)
+{
+    (void)context;
+    (void)e;
+
+    return 0;
+}
+
+
+void test_empty()
+{
+    hashmap_t h;
+    int z = 5;
+    int *got;
+
+    memset(&h, 0, sizeof(hashmap_t));
+
+    CU_ASSERT(NULL == hashmap_get(&h, "foo", 3));
+    CU_ASSERT(1 == hashmap_remove(&h, "foo", 3));
+    CU_ASSERT(NULL == hashmap_remove_and_return_key(&h, "foo", 3));
+    CU_ASSERT(0 == hashmap_iterate(&h, &empty_iterate, NULL));
+    CU_ASSERT(0 == hashmap_iterate_pairs(&h, &empty_iterate_e, NULL));
+    CU_ASSERT(0 == hashmap_num_entries(&h));
+    hashmap_destroy(&h);
+    CU_ASSERT(0 == hashmap_num_entries(&h));
+
+    CU_ASSERT(0 == hashmap_put(&h, "foo", 3, &z));
+    CU_ASSERT(1 == hashmap_num_entries(&h));
+    got = hashmap_get(&h, "foo", 3);
+    CU_ASSERT(*got == 5);
+    hashmap_destroy(&h);
+}
+
+
+void test_null()
+{
+    int z = 5;
+
+    CU_ASSERT(NULL == hashmap_get(NULL, "foo", 3));
+    CU_ASSERT(1 == hashmap_remove(NULL, "foo", 3));
+    CU_ASSERT(NULL == hashmap_remove_and_return_key(NULL, "foo", 3));
+    CU_ASSERT(0 == hashmap_iterate(NULL, &empty_iterate, NULL));
+    CU_ASSERT(0 == hashmap_iterate_pairs(NULL, &empty_iterate_e, NULL));
+    CU_ASSERT(0 == hashmap_num_entries(NULL));
+    hashmap_destroy(NULL);
+    CU_ASSERT(0 == hashmap_num_entries(NULL));
+
+    CU_ASSERT(0 != hashmap_put(NULL, "foo", 3, &z));
+}
+
+
+void test_boundary()
+{
+    hashmap_t h;
+
+    CU_ASSERT(-1 == hashmap_create(SIZE_MAX, &h));
+    CU_ASSERT(-1 == hashmap_create(50, NULL));
+}
+
 
 void add_suites(CU_pSuite *suite)
 {
@@ -335,10 +489,15 @@ void add_suites(CU_pSuite *suite)
     CU_add_test(*suite, "hashmap_iterate() Test (early exit)", test_iterate_early_exit);
     CU_add_test(*suite, "hashmap_iterate() Test (all)", test_iterate_all);
     CU_add_test(*suite, "hashmap_num_entries() Test", test_num_entries);
-    CU_add_test(*suite, "Test remove all", test_remove_all);
+    CU_add_test(*suite, "hashmap_iterate_pairs() Test (remove all)", test_remove_all);
+    CU_add_test(*suite, "hashmap_iterate_pairs() Test (walk all)", test_walk_all);
+    CU_add_test(*suite, "hashmap_iterate_pairs() Test (walk one)", test_walk_one);
     CU_add_test(*suite, "Test hash conflict", test_hash_conflict);
     CU_add_test(*suite, "Test issue 20", test_issue_20);
     CU_add_test(*suite, "Simple Test", simple_test);
+    CU_add_test(*suite, "Empty Hashmap Test", test_empty);
+    CU_add_test(*suite, "Null Hashmap Test", test_null);
+    CU_add_test(*suite, "Simple Boundary Tests", test_boundary);
 }
 
 
