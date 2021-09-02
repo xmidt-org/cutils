@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v2.0.0]
+- Update the hashmap api.
+    - Change to use size_t vs. unsigned int.
+    - Change struct hashmap_s to be a typedef hashmap_t.
+    - Change struct hashmap_element_s to be struct hashmap_element.
+    - Change the interface so calling hashmap_create() is optional if the
+      structure is set to all '0'.
+- Add tests for collisions and handling collision depth exhaustion.
+- Make all the failures possible "gentle" and only hard fail if needed.
+- Split out the crc code into it's own file for testing support.
+
 ## [v1.3.0]
 - Add hashmap api.
 
@@ -23,7 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [v1.0.0]
 - Initial creation
 
-[Unreleased]: https://github.com/xmidt-org/cutils/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/xmidt-org/cutils/compare/v2.0.0...HEAD
+[v2.0.0]: https://github.com/xmidt-org/cutils/compare/v1.3.0...v2.0.0
 [v1.3.0]: https://github.com/xmidt-org/cutils/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/xmidt-org/cutils/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/xmidt-org/cutils/compare/v1.0.0...v1.1.0
