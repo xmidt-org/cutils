@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 project('cutils', 'c',
-        version: '2.0.0',
+        version: '2.1.0',
         license: ['Apache-2.0', 'MIT', 'Unlicense'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])

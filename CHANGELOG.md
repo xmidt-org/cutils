@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v2.1.0]
+- Fix a documentation and implementation bug where iterating exited on a return
+  value of 0 instead of continuing on zero.
+- Add a new must() function to assert not NULL or abort() always.  This is
+  different than assert() which is disabled in non-debug code.
+
 ## [v2.0.0]
 - Update the hashmap api.
     - Change to use size_t vs. unsigned int.
@@ -34,7 +40,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [v1.0.0]
 - Initial creation
 
-[Unreleased]: https://github.com/xmidt-org/cutils/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/xmidt-org/cutils/compare/v2.1.0...HEAD
+[v2.1.0]: https://github.com/xmidt-org/cutils/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/xmidt-org/cutils/compare/v1.3.0...v2.0.0
 [v1.3.0]: https://github.com/xmidt-org/cutils/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/xmidt-org/cutils/compare/v1.1.0...v1.2.0
