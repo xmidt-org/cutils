@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "must.h"
 #include "printf.h"
 
 /*----------------------------------------------------------------------------*/
@@ -138,8 +139,6 @@ char *must_mlaprintf(size_t *len, const char *format, ...)
 
 char *must_mlvaprintf(size_t *len, const char *format, va_list args)
 {
-    char *rv = NULL;
-
     if (!format) {
         if (len) {
             *len = 0;
@@ -147,12 +146,5 @@ char *must_mlvaprintf(size_t *len, const char *format, va_list args)
         return NULL;
     }
 
-    rv = mlvaprintf(len, format, args);
-
-    if (!rv) {
-        abort();
-    }
-
-    return rv;
+    return must(mlvaprintf(len, format, args));
 }
-

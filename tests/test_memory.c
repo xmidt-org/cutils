@@ -114,12 +114,26 @@ void test_must_memappend()
 
     free(p);
 }
+
+
+void test_must_calloc()
+{
+    void *p = NULL;
+
+    p = must_calloc(1, 1);
+    CU_ASSERT(NULL != p);
+
+    free(p);
+}
+
+
 void add_suites(CU_pSuite *suite)
 {
     *suite = CU_add_suite("memory.c tests", NULL, NULL);
     CU_add_test(*suite, "saferealloc() Tests", test_saferealloc);
     CU_add_test(*suite, "memdup() Tests", test_memdup);
     CU_add_test(*suite, "memappend() Tests", test_memappend);
+    CU_add_test(*suite, "must_calloc() Tests", test_must_calloc);
     CU_add_test(*suite, "must_realloc() Tests", test_must_realloc);
     CU_add_test(*suite, "must_memdup() Tests", test_must_memdup);
     CU_add_test(*suite, "must_memappend() Tests", test_must_memappend);

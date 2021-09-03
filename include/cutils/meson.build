@@ -25,6 +25,8 @@ ver_h = configure_file(input:  'ver.h.in',
                        configuration: cfg)
 
 headers = files(['base64.h',
+                 'hashmap.h',
+                 'must.h',
                  'printf.h',
                  'nl_ctype.h',
                  'nl_strings.h',

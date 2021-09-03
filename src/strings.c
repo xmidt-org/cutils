@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "must.h"
 #include "nl_strings.h"
 #include "strings.h"
 
@@ -75,22 +76,17 @@ char *cu_strndup(const char *s, size_t maxlen)
 
 char *cu_must_strdup(const char *s)
 {
-    return cu_strndup(s, SIZE_MAX);
+    return cu_must_strndup(s, SIZE_MAX);
 }
 
 
 char *cu_must_strndup(const char *s, size_t maxlen)
 {
-    char *rv = NULL;
-
     if (s && (0 < maxlen)) {
-        rv = cu_strndup(s, maxlen);
-        if (!rv) {
-            abort();
-        }
+        return must(cu_strndup(s, maxlen));
     }
 
-    return rv;
+    return NULL;
 }
 
 int nl_toupper(int c)
