@@ -245,7 +245,7 @@ int hashmap_iterate(const hashmap_t *const m,
     /* Linear probing */
     for (size_t i = 0; i < m->table_size; i++) {
         if (m->data[i].in_use) {
-            if (!f(context, m->data[i].data)) {
+            if (f(context, m->data[i].data)) {
                 return 1;
             }
         }

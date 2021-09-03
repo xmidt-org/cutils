@@ -135,6 +135,9 @@ const char *hashmap_remove_and_return_key(hashmap_t *const hashmap,
 /**
  *  Iterate over all the values in a hashmap.
  *
+ *  @note When the function f() returns 0, processing continues as normals.
+ *        If non-zero is returned, then processing stops.
+ *
  *  @param hashmap The hashmap to iterate over.
  *  @param f       The function pointer to call on each element.
  *  @param context The context to pass as the first argument to f.
@@ -149,6 +152,10 @@ int hashmap_iterate(const hashmap_t *const hashmap,
 
 /**
  *  Iterate over all the elements in a hashmap.
+ *
+ *  @note When the function f() returns 0, processing continues as normals.
+ *        If non-zero is returned, then processing stops.
+ *        If -1 is returned, the current item is removed and iteration continues.
  *
  *  @param hashmap The hashmap to iterate over.
  *  @param f       The function pointer to call on each element.

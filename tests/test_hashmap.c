@@ -16,7 +16,7 @@
 static int set_context(void *const context, void *const element)
 {
     *(int *)context = *(int *)element;
-    return 1;
+    return 0;
 }
 
 
@@ -134,7 +134,7 @@ static int early_exit(void *const context, void *const element)
 {
     *(int *)context += 1;
     *(int *)element += 1;
-    return 0;
+    return 1;
 }
 
 
@@ -179,7 +179,7 @@ static int all(void *const context, void *const element)
 {
     *(int *)context += 1;
     *(int *)element += 1;
-    return 1;
+    return 0;
 }
 
 
@@ -406,6 +406,36 @@ void simple_test()
 }
 
 
+void simple_no_ptr_test()
+{
+    hashmap_t h;
+    int got;
+
+    /* Show an example of how to stuff numbers in vs. pointers. */
+    CU_ASSERT(0 == hashmap_create(1, &h));
+    CU_ASSERT(0 == hashmap_put(&h, "foo", 3, (void *)5));
+    CU_ASSERT(0 == hashmap_put(&h, "bar", 3, (void *)4));
+    CU_ASSERT(0 == hashmap_put(&h, "foobar", 6, (void *)3));
+
+    got = (int)(intptr_t)hashmap_get(&h, "foo", 3);
+    CU_ASSERT(got == 5);
+    got = (int)(intptr_t)hashmap_get(&h, "bar", 3);
+    CU_ASSERT(got == 4);
+    got = (int)(intptr_t)hashmap_get(&h, "foobar", 6);
+    CU_ASSERT(got == 3);
+    got = (int)(intptr_t)hashmap_get(&h, "invalid", 7);
+    CU_ASSERT(got == 0);
+
+    CU_ASSERT(0 == hashmap_remove(&h, "foo", 3));
+    CU_ASSERT(1 == hashmap_remove(&h, "foo", 3));
+
+    CU_ASSERT(NULL != hashmap_remove_and_return_key(&h, "bar", 3));
+    CU_ASSERT(NULL == hashmap_remove_and_return_key(&h, "bar", 3));
+
+    hashmap_destroy(&h);
+}
+
+
 int empty_iterate(void *const context, void *const value)
 {
     (void)context;
@@ -495,6 +525,7 @@ void add_suites(CU_pSuite *suite)
     CU_add_test(*suite, "Test hash conflict", test_hash_conflict);
     CU_add_test(*suite, "Test issue 20", test_issue_20);
     CU_add_test(*suite, "Simple Test", simple_test);
+    CU_add_test(*suite, "Simple No Pointer Test", simple_no_ptr_test);
     CU_add_test(*suite, "Empty Hashmap Test", test_empty);
     CU_add_test(*suite, "Null Hashmap Test", test_null);
     CU_add_test(*suite, "Simple Boundary Tests", test_boundary);
