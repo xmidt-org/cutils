@@ -86,7 +86,7 @@ struct test_vector common_decoder_tests[] = {
         { .rv = -1, .in_len = 4, .in = "bs\x0ap" },
 
         /* A remainder of 1 is never valid */
-        { .rv = -2, .in_len = 5, .in = "TWFub", .in_len = 5 },
+        { .rv = -2, .in_len = 5, .in = "TWFub" },
 
         /* Simple valid examples */
         { .rv =  0, .in_len = 4, .in = "TWFu", .out_len = 3, .out = "Man" },

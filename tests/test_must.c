@@ -5,7 +5,7 @@
 #include "must.h"
 
 static int abort_calls = 0;
-void abort(void)
+void __test_abort(void)
 {
     abort_calls++;
 }

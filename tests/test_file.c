@@ -21,7 +21,7 @@ void test_freadall(void)
     /* Seed the file */
     fd = mkstemp(filename);
     CU_ASSERT_FATAL(-1 != fd);
-    CU_ASSERT_FATAL(strlen(text) == write(fd, text, strlen(text)));
+    CU_ASSERT_FATAL(strlen(text) == (size_t)write(fd, text, strlen(text)));
     CU_ASSERT_FATAL(0 == fsync(fd));
 
     /* Use the file & check the output. */

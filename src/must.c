@@ -8,7 +8,13 @@
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
-/* none */
+
+/* Since abort() is marked as noreturn, and I can't find a way to overwrite that
+ * so we can test it in a way compilers are happy, so use a macro.
+ */
+#ifndef __cutils_abort
+#define __cutils_abort abort
+#endif
 
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
@@ -37,7 +43,7 @@
 void *must(const void *const in)
 {
     if (!in) {
-        abort();
+        __cutils_abort();
     }
 
     return (void *)in;
