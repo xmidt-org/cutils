@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 project('cutils', 'c',
-        version: '2.1.0',
+        version: '2.1.1',
         license: ['Apache-2.0', 'MIT', 'Unlicense'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])
@@ -65,7 +65,6 @@ if not meson.is_subproject()
            ['test hashmap',           'test_hashmap'],
            ['test hashmap collision', 'test_hashmap_collision'],
            ['test memory',            'test_memory'],
-           ['test must',              'test_must'],
            ['test printf',            'test_printf'],
            ['test nl_strings',        'test_nl_strings'],
            ['test strings',           'test_strings'],
@@ -80,6 +79,14 @@ if not meson.is_subproject()
                     link_args: test_args,
                     link_with: libcutils))
   endforeach
+
+  test('test must',
+       executable('test_must', ['tests/test_must.c', 'src/must.c'],
+                  include_directories: inc,
+                  dependencies: cunit_dep,
+                  install: false,
+                  link_args: [test_args, '-D__cutils_abort=__test_abort']),
+       should_fail: true)
 
   add_test_setup('valgrind',
                  is_default: true,

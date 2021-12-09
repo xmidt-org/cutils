@@ -41,17 +41,14 @@ jobs:
         run: |
           pip3 install --user 'meson>=0.59.0'
 
-      - name: Make Build Directory
-        run: mkdir build
+      - name: Meson Build
+        run: |
+          meson setup --warnlevel 3 --werror build
 
       - name: Get Sonarcloud Binaries
         working-directory: build
         run: |
           ../.github/scripts/get_sonarcloud.sh
-
-      - name: Meson Build
-        run: |
-          meson build
 
       - name: Build
         working-directory: build
