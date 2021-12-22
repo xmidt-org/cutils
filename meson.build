@@ -108,6 +108,16 @@ if reuse_bin.found()
                 output: ['license'])
 endif
 
+################################################################################
+# Add the coverity check target
+################################################################################
+
+alias_target('coverity', libcutils )
+
+################################################################################
+# External/consumer definitions
+################################################################################
+
 libcutils_dep = declare_dependency(include_directories: ['include'],
                                           link_with: libcutils)
 
