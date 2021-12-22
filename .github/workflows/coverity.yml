@@ -26,4 +26,3 @@ jobs:
       sha: $GITHUB_SHA
     secrets:
       coverity_key: ${{ secrets.COVERITY_KEY }}
-      token: ${{ secrets.GITHUB_TOKEN }}
