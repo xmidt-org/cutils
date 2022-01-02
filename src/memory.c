@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <stdlib.h>
@@ -133,4 +133,3 @@ void *must_memappend(void **buf, size_t *buf_len, const void *src, size_t len)
 
     return must(memappend(buf, buf_len, src, len));
 }
-

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <stddef.h>
@@ -107,7 +107,7 @@ static size_t get_enc_size(int type, size_t decoded_size)
 static size_t get_dec_size(int type, size_t encoded_size)
 {
     size_t remainder = 0;
-    size_t rv = 0;
+    size_t rv        = 0;
 
     if (B64_STD == type) {
         rv = (encoded_size / 4) * 3;
@@ -142,10 +142,10 @@ static size_t get_dec_size(int type, size_t encoded_size)
 static int encode(const struct b64_cfg *cfg, const uint8_t *in, size_t len,
                   uint8_t *out, size_t *out_len)
 {
-    uint32_t bits = 0;
-    int bit_count = 0;
-    size_t j = 0;
-    const uint8_t *map = (const uint8_t *)cfg->enc_map;
+    uint32_t bits      = 0;
+    int bit_count      = 0;
+    size_t j           = 0;
+    const uint8_t *map = (const uint8_t *) cfg->enc_map;
 
     for (size_t i = 0; i < len; i++) {
         bits = (bits << 8) | in[i];
@@ -189,10 +189,10 @@ static int decode(const struct b64_cfg *cfg, const uint8_t *in, size_t len,
                   uint8_t *out, size_t *out_len)
 {
 
-    uint32_t bits = 0;
-    int bit_count = 0;
+    uint32_t bits  = 0;
+    int bit_count  = 0;
     size_t padding = 0;
-    size_t j = 0;
+    size_t j       = 0;
 
     if ('=' == in[len - 1]) {
         padding++;
@@ -223,7 +223,7 @@ static int decode(const struct b64_cfg *cfg, const uint8_t *in, size_t len,
 
         if (8 <= bit_count) {
             if (out) {
-                out[j] = (uint8_t)(0x0ff & (bits >> (bit_count - 8)));
+                out[j] = (uint8_t) (0x0ff & (bits >> (bit_count - 8)));
             }
             j++;
             bit_count -= 8;
@@ -241,10 +241,10 @@ int process(int opts,
             const uint8_t *in, size_t in_len, uint8_t **_out, size_t *out_len)
 {
 
-    uint8_t *out = NULL;
-    int type = 0;
+    uint8_t *out    = NULL;
+    int type        = 0;
     size_t dec_size = 0;
-    int rv = 0;
+    int rv          = 0;
     int alloced_buf = 0;
 
     if (NULL == out_len) {
@@ -253,15 +253,15 @@ int process(int opts,
 
     /* Validate types */
     switch (0x0f & opts) {
-    case B64_STD:
-        type = B64_STD;
-        break;
-    case B64_URL:
-        type = B64_URL;
-        break;
-    default:
-        *out_len = 0;
-        return -5;
+        case B64_STD:
+            type = B64_STD;
+            break;
+        case B64_URL:
+            type = B64_URL;
+            break;
+        default:
+            *out_len = 0;
+            return -5;
     }
 
     /* If a NULL buffer or zero length is passed in, return successfully with
@@ -291,7 +291,7 @@ int process(int opts,
             out = *_out;
         } else {
             alloced_buf = 1;
-            out = calloc(dec_size, sizeof(uint8_t));
+            out         = calloc(dec_size, sizeof(uint8_t));
             if (!out) {
                 return -4;
             }
@@ -320,14 +320,14 @@ int process(int opts,
 int b64_decode(int opts, const void *in, size_t in_len,
                void **out, size_t *out_len)
 {
-    return process(opts, get_dec_size, decode, (const uint8_t *)in, in_len,
-                   (uint8_t **)out, out_len);
+    return process(opts, get_dec_size, decode, (const uint8_t *) in, in_len,
+                   (uint8_t **) out, out_len);
 }
 
 
 int b64_encode(int opts, const void *in, size_t in_len,
                char **out, size_t *out_len)
 {
-    return process(opts, get_enc_size, encode, (const uint8_t *)in, in_len,
-                   (uint8_t **)out, out_len);
+    return process(opts, get_enc_size, encode, (const uint8_t *) in, in_len,
+                   (uint8_t **) out, out_len);
 }

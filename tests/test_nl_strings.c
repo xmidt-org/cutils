@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 #include <CUnit/Basic.h>
 
@@ -7,13 +7,14 @@
 
 void test_nl_tocase()
 {
+    // clang-format off
     struct test {
         int in;
         int upper;
         int lower;
     } vector[] = {
-        { .in = 0, .upper = 0, .lower = 0 },
-        { .in = 10, .upper = 10, .lower = 10 },
+        { .in =   0, .upper =  0,  .lower =  0  },
+        { .in =  10, .upper = 10,  .lower = 10  },
         { .in = '0', .upper = '0', .lower = '0' },
         { .in = '@', .upper = '@', .lower = '@' },
         { .in = 'A', .upper = 'A', .lower = 'a' },
@@ -29,6 +30,7 @@ void test_nl_tocase()
         { .in = '{', .upper = '{', .lower = '{' },
         { .in = 1000, .upper = 1000, .lower = 1000 },
     };
+    // clang-format on
 
     for (size_t i = 0; i < sizeof(vector) / sizeof(struct test); i++) {
         CU_ASSERT(vector[i].upper == nl_toupper(vector[i].in));
@@ -69,7 +71,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

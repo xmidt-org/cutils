@@ -40,8 +40,8 @@
 #include "hashmap.h"
 
 #define HASHMAP_MAX_CHAIN_LENGTH (8)
-#define HASHMAP_MAX_SIZE (size_t)(1 << 31) /* Up to 2G entries work */
-#define HASHMAP_DEFAULT_SIZE (16)
+#define HASHMAP_MAX_SIZE         (size_t)(1 << 31) /* Up to 2G entries work */
+#define HASHMAP_DEFAULT_SIZE     (16)
 
 /*----------------------------------------------------------------------------*/
 /*                            Function Prototypes                             */
@@ -84,7 +84,7 @@ int hashmap_create(size_t initial_size, hashmap_t *const out_hashmap)
     initial_size = num_to_pow2(initial_size);
 
     out_hashmap->table_size = initial_size;
-    out_hashmap->size = 0;
+    out_hashmap->size       = 0;
 
     out_hashmap->data = calloc(initial_size, sizeof(struct hashmap_element));
     if (!out_hashmap->data) {
@@ -121,8 +121,8 @@ int hashmap_put(hashmap_t *const m, const char *const key,
     }
 
     /* Set the data. */
-    m->data[index].data = value;
-    m->data[index].key = key;
+    m->data[index].data    = value;
+    m->data[index].key     = key;
     m->data[index].key_len = len;
 
     /* If the hashmap element was not already in use, set that it is being used
@@ -219,8 +219,8 @@ const char *hashmap_remove_and_return_key(hashmap_t *const m,
 
                 /* Blank out the fields */
                 m->data[curr].in_use = 0;
-                m->data[curr].data = NULL;
-                m->data[curr].key = NULL;
+                m->data[curr].data   = NULL;
+                m->data[curr].key    = NULL;
 
                 /* Reduce the size */
                 m->size--;
@@ -270,14 +270,14 @@ int hashmap_iterate_pairs(hashmap_t *const m,
             int r = f(context, p);
 
             switch (r) {
-            case -1: /* remove item */
-                memset(p, 0, sizeof(struct hashmap_element));
-                m->size--;
-                break;
-            case 0: /* continue iterating */
-                break;
-            default: /* early exit */
-                return 1;
+                case -1: /* remove item */
+                    memset(p, 0, sizeof(struct hashmap_element));
+                    m->size--;
+                    break;
+                case 0: /* continue iterating */
+                    break;
+                default: /* early exit */
+                    return 1;
             }
         }
     }
@@ -344,9 +344,9 @@ static int hashmap_match_helper(const struct hashmap_element *const element,
 static int hashmap_hash_helper(const hashmap_t *const m, const char *const key,
                                const size_t len, size_t *const out_index)
 {
-    size_t curr = 0;
+    size_t curr        = 0;
     size_t first_empty = SIZE_MAX;
-    int total_in_use = 0;
+    int total_in_use   = 0;
 
     /* If full, return immediately */
     if (m->size >= m->table_size) {
@@ -390,7 +390,7 @@ static int hashmap_hash_helper(const hashmap_t *const m, const char *const key,
 static int hashmap_rehash_iterator(void *const new_hash,
                                    struct hashmap_element *const e)
 {
-    int temp = hashmap_put((hashmap_t *)new_hash, e->key, e->key_len, e->data);
+    int temp = hashmap_put((hashmap_t *) new_hash, e->key, e->key_len, e->data);
     if (0 != temp) {
         return 1;
     }
@@ -406,7 +406,7 @@ static int hashmap_rehash_helper(hashmap_t *const m)
 {
     /* If this multiplication overflows hashmap_create will fail. */
     size_t new_size = 0;
-    int rv = 0;
+    int rv          = 0;
     hashmap_t new_hash;
 
     /* If the hashmap is less than 75% full and we had a collision, then
@@ -420,7 +420,7 @@ static int hashmap_rehash_helper(hashmap_t *const m)
     /* While this will result in doubling the size, this will not accidentally
      * overflow the size. */
     new_size = m->table_size + HASHMAP_DEFAULT_SIZE;
-    rv = hashmap_create(new_size, &new_hash);
+    rv       = hashmap_create(new_size, &new_hash);
     if (0 == rv) {
 
         /* copy the old elements to the new table */

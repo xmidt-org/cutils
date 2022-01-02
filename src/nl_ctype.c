@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 1998-2020 Daniel Stenberg, <daniel@haxx.se>, et al */
 /* SPDX-License-Identifier: MIT */
 
+// clang-format off
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -145,3 +146,4 @@ int nl_iscntrl(int c)
         return 0;
     return (ascii[c] & (_C));
 }
+// clang-format on

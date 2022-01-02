@@ -1,5 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
-/* SPDX-FileCopyrightText: 2021 Weston Schmidt */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <stddef.h>
@@ -96,8 +95,7 @@ extern uint32_t hashmap_crc32_helper(const char *const s, const size_t len)
     };
 
     for (size_t i = 0; i < len; i++) {
-        crc32val = crc32_tab[((uint8_t)crc32val) ^ ((uint8_t)s[i])] ^ (crc32val >> 8);
+        crc32val = crc32_tab[((uint8_t) crc32val) ^ ((uint8_t) s[i])] ^ (crc32val >> 8);
     }
     return crc32val;
 }
-

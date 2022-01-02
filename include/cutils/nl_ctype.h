@@ -1,6 +1,7 @@
 /* SPDX-FileCopyrightText: 1998-2021 Daniel Stenberg, <daniel@haxx.se>, et al */
 /* SPDX-License-Identifier: MIT */
 
+// clang-format off
 #ifndef __NL_CTYPE_H__
 #define __NL_CTYPE_H__
 
@@ -70,3 +71,4 @@ int nl_iscntrl(int c);
 #define NL_ISBLANK(x) (int)((((unsigned char)x) == ' ') || (((unsigned char)x) == '\t'))
 
 #endif
+// clang-format on

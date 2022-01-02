@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #ifndef __FILE_H__
@@ -25,4 +25,3 @@
 int freadall(const char *filename, size_t max, void **data, size_t *len);
 
 #endif
-

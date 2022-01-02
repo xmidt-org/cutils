@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <stdio.h>
@@ -87,7 +87,7 @@ char *mlvaprintf(size_t *len, const char *format, va_list args)
             if (rv != l) {
                 free(buf);
                 buf = NULL;
-                l = 0;
+                l   = 0;
             }
         } else {
             l = 0;
@@ -95,7 +95,7 @@ char *mlvaprintf(size_t *len, const char *format, va_list args)
     }
 
     if (len) {
-        *len = (size_t)l;
+        *len = (size_t) l;
     }
 
     return buf;

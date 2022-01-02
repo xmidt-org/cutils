@@ -1,4 +1,4 @@
-/*SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/*SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 #include <CUnit/Basic.h>
 
@@ -27,7 +27,7 @@ void test_saferealloc()
 
 void test_memdup()
 {
-    void *p = NULL;
+    void *p        = NULL;
     const char *in = "foobar";
 
     CU_ASSERT_FATAL(NULL == memdup(in, 0));
@@ -44,7 +44,7 @@ void test_memdup()
 
 void test_memappend()
 {
-    void *p = NULL;
+    void *p    = NULL;
     size_t len = 0;
 
     CU_ASSERT_FATAL(NULL == memappend(&p, &len, NULL, 0));
@@ -82,7 +82,7 @@ void test_must_realloc()
 
 void test_must_memdup()
 {
-    void *p = NULL;
+    void *p        = NULL;
     const char *in = "foobar";
 
     CU_ASSERT_FATAL(NULL == must_memdup(in, 0));
@@ -99,7 +99,7 @@ void test_must_memdup()
 
 void test_must_memappend()
 {
-    void *p = NULL;
+    void *p    = NULL;
     size_t len = 0;
 
     CU_ASSERT_FATAL(NULL == must_memappend(&p, &len, NULL, 0));
@@ -145,7 +145,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

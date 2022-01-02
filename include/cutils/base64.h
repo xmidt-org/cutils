@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2010-2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2010-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 #ifndef __BASE64_L__
 #define __BASE64_L__
@@ -7,11 +7,9 @@
 #include <stdint.h>
 
 /* The options to specify. */
-// clang-format off
-#define B64_STD         (0x00)
-#define B64_URL         (0x01)
-#define B64_PROVIDED    (0x80)
-// clang-format on
+#define B64_STD      (0x00)
+#define B64_URL      (0x01)
+#define B64_PROVIDED (0x80)
 
 /*----------------------------------------------------------------------------*/
 /*                             Standard Base64                                */
