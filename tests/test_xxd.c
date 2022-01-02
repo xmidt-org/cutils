@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2008, 2021 Ed Rose, Weston Schmidt */
+/* SPDX-FileCopyrightText: 2008, 2021-2022 Ed Rose, Weston Schmidt */
 /* SPDX-License-Identifier: Apache-2.0 */
 /*
  *  xxd.c - formatted (like xxd) buffer dump
@@ -59,13 +59,14 @@ int fputc(int c, FILE *stream)
 {
     CU_ASSERT(stdout == stream);
 
-    out[index++] = (char)c;
+    out[index++] = (char) c;
 
     return c;
 }
 
 void test_xxd(void)
 {
+    // clang-format off
     struct test {
         const char *in;
         size_t len;
@@ -107,6 +108,7 @@ void test_xxd(void)
             .expect = "",
         },
     };
+    // clang-format on
 
     for (size_t i = 0; i < sizeof(tests) / sizeof(struct test); i++) {
         size_t len = strlen(tests[i].expect);
@@ -117,7 +119,7 @@ void test_xxd(void)
         printf("index = %d, len = %zd\n", index, len);
         printf("got:\n'%.*s'\nwanted:\n'%s'\n", index, out, tests[i].expect);
 #endif
-        CU_ASSERT(index == (int)len);
+        CU_ASSERT(index == (int) len);
         CU_ASSERT_NSTRING_EQUAL(out, tests[i].expect, tests[i].len);
     }
 }
@@ -135,7 +137,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

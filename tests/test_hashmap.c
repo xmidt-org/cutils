@@ -15,7 +15,7 @@
 
 static int set_context(void *const context, void *const element)
 {
-    *(int *)context = *(int *)element;
+    *(int *) context = *(int *) element;
     return 0;
 }
 
@@ -82,7 +82,7 @@ void test_get_exists()
 
     CU_ASSERT(0 == hashmap_create(1, &h));
     CU_ASSERT(0 == hashmap_put(&h, "foo", 3, &x));
-    y = (int *)hashmap_get(&h, "foo", 3);
+    y = (int *) hashmap_get(&h, "foo", 3);
     CU_ASSERT(*y == x);
 
     hashmap_destroy(&h);
@@ -132,8 +132,8 @@ void test_remove_and_return_key()
 
 static int early_exit(void *const context, void *const element)
 {
-    *(int *)context += 1;
-    *(int *)element += 1;
+    *(int *) context += 1;
+    *(int *) element += 1;
     return 1;
 }
 
@@ -177,8 +177,8 @@ void test_iterate_early_exit()
 
 static int all(void *const context, void *const element)
 {
-    *(int *)context += 1;
-    *(int *)element += 1;
+    *(int *) context += 1;
+    *(int *) element += 1;
     return 0;
 }
 
@@ -229,7 +229,7 @@ void test_num_entries()
 
 static int rem_all(void *context, struct hashmap_element *e)
 {
-    (*(int *)context) += e->key_len;
+    (*(int *) context) += e->key_len;
     return -1;
 }
 
@@ -262,7 +262,7 @@ void test_remove_all()
 
 static int walk_all(void *context, struct hashmap_element *e)
 {
-    (*(int *)context) += e->key_len;
+    (*(int *) context) += e->key_len;
     return 0;
 }
 
@@ -295,7 +295,7 @@ void test_walk_all()
 
 static int walk_one(void *context, struct hashmap_element *e)
 {
-    (*(int *)context) += e->key_len;
+    (*(int *) context) += e->key_len;
     return 1;
 }
 
@@ -359,16 +359,16 @@ void test_hash_conflict()
 void test_issue_20()
 {
     hashmap_t h;
-    const char *key = "192.168.2.2hv_api.udache.com/abc/def";
+    const char *key  = "192.168.2.2hv_api.udache.com/abc/def";
     unsigned int len = sizeof(key) - 1;
 
     char *value = "1";
-    char *ptr = NULL;
+    char *ptr   = NULL;
 
     hashmap_create(1024, &h);
     hashmap_put(&h, key, len, value);
 
-    ptr = (char *)hashmap_get(&h, key, len);
+    ptr = (char *) hashmap_get(&h, key, len);
 
     CU_ASSERT(value == ptr);
 
@@ -413,17 +413,17 @@ void simple_no_ptr_test()
 
     /* Show an example of how to stuff numbers in vs. pointers. */
     CU_ASSERT(0 == hashmap_create(1, &h));
-    CU_ASSERT(0 == hashmap_put(&h, "foo", 3, (void *)5));
-    CU_ASSERT(0 == hashmap_put(&h, "bar", 3, (void *)4));
-    CU_ASSERT(0 == hashmap_put(&h, "foobar", 6, (void *)3));
+    CU_ASSERT(0 == hashmap_put(&h, "foo", 3, (void *) 5));
+    CU_ASSERT(0 == hashmap_put(&h, "bar", 3, (void *) 4));
+    CU_ASSERT(0 == hashmap_put(&h, "foobar", 6, (void *) 3));
 
-    got = (int)(intptr_t)hashmap_get(&h, "foo", 3);
+    got = (int) (intptr_t) hashmap_get(&h, "foo", 3);
     CU_ASSERT(got == 5);
-    got = (int)(intptr_t)hashmap_get(&h, "bar", 3);
+    got = (int) (intptr_t) hashmap_get(&h, "bar", 3);
     CU_ASSERT(got == 4);
-    got = (int)(intptr_t)hashmap_get(&h, "foobar", 6);
+    got = (int) (intptr_t) hashmap_get(&h, "foobar", 6);
     CU_ASSERT(got == 3);
-    got = (int)(intptr_t)hashmap_get(&h, "invalid", 7);
+    got = (int) (intptr_t) hashmap_get(&h, "invalid", 7);
     CU_ASSERT(got == 0);
 
     CU_ASSERT(0 == hashmap_remove(&h, "foo", 3));
@@ -438,8 +438,8 @@ void simple_no_ptr_test()
 
 int empty_iterate(void *const context, void *const value)
 {
-    (void)context;
-    (void)value;
+    (void) context;
+    (void) value;
 
     return 0;
 }
@@ -447,8 +447,8 @@ int empty_iterate(void *const context, void *const value)
 
 int empty_iterate_e(void *const context, struct hashmap_element *const e)
 {
-    (void)context;
-    (void)e;
+    (void) context;
+    (void) e;
 
     return 0;
 }
@@ -537,7 +537,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

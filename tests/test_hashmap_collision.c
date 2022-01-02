@@ -15,8 +15,8 @@
 
 uint32_t hashmap_crc32_helper(const char *const s, const size_t len)
 {
-    (void)s;
-    (void)len;
+    (void) s;
+    (void) len;
 
     /* Always hash to the same slot to fill the hashmap up at just
      * the one slot. */
@@ -57,7 +57,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

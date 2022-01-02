@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2008, 2021 Ed Rose, Weston Schmidt */
+/* SPDX-FileCopyrightText: 2008, 2021-2022 Ed Rose, Weston Schmidt */
 /* SPDX-License-Identifier: Apache-2.0 */
 #define _POSIX_C_SOURCE 200809L
 
@@ -12,51 +12,51 @@
 
 void test_freadall(void)
 {
-    int fd = 0;
+    int fd           = 0;
     char filename[7] = "XXXXXX";
     const char *text = "Hello, world.";
-    char *data = NULL;
-    size_t len = 0;
+    char *data       = NULL;
+    size_t len       = 0;
 
     /* Seed the file */
     fd = mkstemp(filename);
     CU_ASSERT_FATAL(-1 != fd);
-    CU_ASSERT_FATAL(strlen(text) == (size_t)write(fd, text, strlen(text)));
+    CU_ASSERT_FATAL(strlen(text) == (size_t) write(fd, text, strlen(text)));
     CU_ASSERT_FATAL(0 == fsync(fd));
 
     /* Use the file & check the output. */
-    CU_ASSERT_FATAL(0 == freadall(filename, 0, (void **)&data, &len));
+    CU_ASSERT_FATAL(0 == freadall(filename, 0, (void **) &data, &len));
     CU_ASSERT_FATAL(NULL != data);
     CU_ASSERT(strlen(text) == len);
     CU_ASSERT_NSTRING_EQUAL(text, data, strlen(text));
     free(data);
     data = NULL;
-    len = 0;
+    len  = 0;
 
     /* Specify a length larger than the file. */
-    CU_ASSERT_FATAL(0 == freadall(filename, 100, (void **)&data, &len));
+    CU_ASSERT_FATAL(0 == freadall(filename, 100, (void **) &data, &len));
     CU_ASSERT_FATAL(NULL != data);
     CU_ASSERT(strlen(text) == len);
     CU_ASSERT_NSTRING_EQUAL(text, data, strlen(text));
     free(data);
     data = NULL;
-    len = 0;
+    len  = 0;
 
     /* Specify a length equal than the file. */
-    CU_ASSERT_FATAL(0 == freadall(filename, strlen(text), (void **)&data, &len));
+    CU_ASSERT_FATAL(0 == freadall(filename, strlen(text), (void **) &data, &len));
     CU_ASSERT_FATAL(NULL != data);
     CU_ASSERT(strlen(text) == len);
     CU_ASSERT_NSTRING_EQUAL(text, data, strlen(text));
     free(data);
     data = NULL;
-    len = 0;
+    len  = 0;
 
     /* Specify a length shorter than the file. */
-    CU_ASSERT_FATAL(E2BIG == freadall(filename, 5, (void **)&data, &len));
+    CU_ASSERT_FATAL(E2BIG == freadall(filename, 5, (void **) &data, &len));
     CU_ASSERT_FATAL(NULL == data);
     CU_ASSERT(0 == len);
 
-    CU_ASSERT_FATAL(EINVAL == freadall("__invalid__", 0, (void **)&data, &len));
+    CU_ASSERT_FATAL(EINVAL == freadall("__invalid__", 0, (void **) &data, &len));
 
     close(fd);
 
@@ -76,7 +76,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

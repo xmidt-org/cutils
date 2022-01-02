@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <errno.h>
@@ -23,7 +23,7 @@ static int get_file_size(FILE *f, size_t *filesize)
 
         file_len = ftell(f);
         if ((-1 != file_len) && (0 == fseek(f, 0, SEEK_SET))) {
-            *filesize = (size_t)file_len;
+            *filesize = (size_t) file_len;
             return 0;
         }
     }
@@ -38,7 +38,7 @@ static int get_file_size(FILE *f, size_t *filesize)
 
 int freadall(const char *filename, size_t max, void **data, size_t *len)
 {
-    FILE *f = NULL;
+    FILE *f         = NULL;
     size_t file_len = 0;
 
     f = fopen(filename, "rb");
@@ -56,12 +56,12 @@ int freadall(const char *filename, size_t max, void **data, size_t *len)
         return E2BIG;
     }
 
-    *len = 0;
+    *len  = 0;
     *data = NULL;
     if (0 < file_len) {
         *data = malloc(file_len);
         if (*data) {
-            char *p = (char *)*data;
+            char *p     = (char *) *data;
             size_t want = file_len;
             size_t have = 0;
 

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2016-2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2016-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <CUnit/Basic.h>
@@ -143,6 +143,7 @@ void test_encoded_size()
 
 void test_decoded_size()
 {
+    // clang-format off
     struct test {
         size_t length;
         size_t url;
@@ -150,7 +151,6 @@ void test_decoded_size()
         size_t std;
         int std_rv;
     } tests[] = {
-        // clang-format off
         { .length =  0, .url =  0, .url_rv =  0, .std =  0, .std_rv =  0 },
         { .length =  1, .url =  0, .url_rv = -2, .std =  0, .std_rv = -2 },
         { .length =  2, .url =  1, .url_rv =  0, .std =  0, .std_rv = -2 },
@@ -242,10 +242,11 @@ void test_decoded_size()
         { .length = 88, .url = 66, .url_rv =  0, .std = 66, .std_rv =  0 },
         { .length = 89, .url =  0, .url_rv = -2, .std =  0, .std_rv = -2 },
         { .length = 90, .url = 67, .url_rv =  0, .std =  0, .std_rv = -2 },
-        // clang-format on
     };
-    const char *foo = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    // clang-format on
+    const char *foo =
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     for (size_t i = 0; i < sizeof(tests) / sizeof(struct test); i++) {
         size_t len = 0;
@@ -260,7 +261,7 @@ void test_decoded_size()
         CU_ASSERT(tests[i].std == len);
 
         len = 0;
-        rv = b64_decode(B64_URL, foo, tests[i].length, NULL, &len);
+        rv  = b64_decode(B64_URL, foo, tests[i].length, NULL, &len);
         if (rv != tests[i].url_rv || len != tests[i].url) {
             printf("URL %zd - Expected length: %zd, got: %zd, rv: %d, got: %d\n",
                    tests[i].length, tests[i].url, len, tests[i].url_rv, rv);
@@ -276,58 +277,59 @@ void test_decode_helper(int opts, const char *raw, size_t raw_size,
                         int expected_rv)
 {
     size_t result_size = 0;
-    uint8_t *result = NULL;
-    uint8_t *tmp = NULL;
-    int rv = 0;
+    uint8_t *result    = NULL;
+    uint8_t *tmp       = NULL;
+    int rv             = 0;
     char _buf[400];
-    char *buf = (char *)&_buf;
+    char *buf = (char *) &_buf;
 
     // Copy the data into a malloc'ed buffer so valgrind can help us find problems
     // Use it, then free it.
     tmp = memdup(raw, raw_size);
-    rv = b64_decode(opts, tmp, raw_size, (void **)&result, &result_size);
+    rv  = b64_decode(opts, tmp, raw_size, (void **) &result, &result_size);
     free(tmp);
 
     if (expected_rv != rv) {
         printf("rv expected: %d, got: %d\n", expected_rv, rv);
-        printf("opts = %d, rv = %d, raw_size = %zd, raw = '%.*s', "
-               "expected_size = %zd, expected = '%.*s'\n",
-               opts, expected_rv, raw_size, (int)raw_size, raw,
-               expected_size, (int)expected_size, expected);
+        printf(
+            "opts = %d, rv = %d, raw_size = %zd, raw = '%.*s', "
+            "expected_size = %zd, expected = '%.*s'\n",
+            opts, expected_rv, raw_size, (int) raw_size, raw,
+            expected_size, (int) expected_size, expected);
     }
     CU_ASSERT_EQUAL_FATAL(expected_rv, rv);
 
     if (expected_size != result_size) {
         printf("Size fail: raw='%.*s' expected='%.*s' :: %zd %zd\n",
-               (int)raw_size, raw, (int)expected_size, expected,
+               (int) raw_size, raw, (int) expected_size, expected,
                expected_size, result_size);
     }
     CU_ASSERT_EQUAL_FATAL(expected_size, result_size);
 
     for (size_t i = 0; i < expected_size; i++) {
-        CU_ASSERT_EQUAL(result[i], (uint8_t)expected[i]);
-        if (result[i] != (uint8_t)expected[i]) {
+        CU_ASSERT_EQUAL(result[i], (uint8_t) expected[i]);
+        if (result[i] != (uint8_t) expected[i]) {
             printf("Decoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
-                   i, expected[i], (int)expected_size, expected,
-                   i, result[i], (int)result_size, result);
+                   i, expected[i], (int) expected_size, expected,
+                   i, result[i], (int) result_size, result);
         }
     }
     free(result);
 
     /* Do it again with a provided buffer */
     result_size = 400;
-    rv = b64_decode(opts | B64_PROVIDED, raw, raw_size, (void **)&buf, &result_size);
+    rv          = b64_decode(opts | B64_PROVIDED, raw, raw_size, (void **) &buf, &result_size);
     for (size_t i = 0; i < expected_size; i++) {
         if (buf[i] != expected[i]) {
             printf("Decoding Error: Expected[%zd:%c] '%.*s' ::Actual[%zd:%c] '%.*s'\n",
-                   i, expected[i], (int)expected_size, expected,
-                   i, buf[i], (int)result_size, buf);
-            CU_ASSERT_EQUAL(buf[i], (uint8_t)expected[i]);
+                   i, expected[i], (int) expected_size, expected,
+                   i, buf[i], (int) result_size, buf);
+            CU_ASSERT_EQUAL(buf[i], (uint8_t) expected[i]);
         }
     }
-    //printf("expected_rv: %d, got: %d\n", expected_rv, rv);
+    // printf("expected_rv: %d, got: %d\n", expected_rv, rv);
     CU_ASSERT_EQUAL_FATAL(expected_rv, rv);
-    //printf("expected_size: %zd, got: %zd\n", expected_size, result_size);
+    // printf("expected_size: %zd, got: %zd\n", expected_size, result_size);
     CU_ASSERT_EQUAL_FATAL(expected_size, result_size);
 }
 
@@ -415,55 +417,56 @@ void test_encode_helper(int opts, const char *raw, size_t raw_size,
                         int expected_rv)
 {
     size_t result_size = 0;
-    char *result = NULL;
-    uint8_t *tmp = NULL;
-    int rv = 0;
+    char *result       = NULL;
+    uint8_t *tmp       = NULL;
+    int rv             = 0;
     char _buf[100];
-    char *buf = (char *)&_buf;
+    char *buf = (char *) &_buf;
 
     // Copy the data into a malloc'ed buffer so valgrind can help us find problems
     // Use it, then free it.
     tmp = memdup(raw, raw_size);
-    rv = b64_encode(opts, tmp, raw_size, &result, &result_size);
+    rv  = b64_encode(opts, tmp, raw_size, &result, &result_size);
     free(tmp);
 
     if (expected_rv != rv) {
         printf("rv expected: %d, got: %d\n", expected_rv, rv);
-        printf("opts = %d, rv = %d, raw_size = %zd, raw = '%.*s', "
-               "expected_size = %zd, expected = '%.*s'\n",
-               opts, expected_rv, raw_size, (int)raw_size, raw,
-               expected_size, (int)expected_size, expected);
+        printf(
+            "opts = %d, rv = %d, raw_size = %zd, raw = '%.*s', "
+            "expected_size = %zd, expected = '%.*s'\n",
+            opts, expected_rv, raw_size, (int) raw_size, raw,
+            expected_size, (int) expected_size, expected);
     }
     CU_ASSERT_EQUAL(expected_rv, rv);
 
     if (expected_size != result_size) {
         printf("Size fail: raw='%.*s' expected='%.*s' :: %zd %zd\n",
-               (int)raw_size, raw, (int)expected_size, expected,
+               (int) raw_size, raw, (int) expected_size, expected,
                expected_size, result_size);
     }
     CU_ASSERT_EQUAL(expected_size, result_size);
 
     for (size_t i = 0; i < expected_size; i++) {
-        CU_ASSERT_EQUAL(result[i], (uint8_t)expected[i]);
-        if (result[i] != (uint8_t)expected[i]) {
+        CU_ASSERT_EQUAL(result[i], (uint8_t) expected[i]);
+        if (result[i] != (uint8_t) expected[i]) {
             printf("Encoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
-                   i, expected[i], (int)expected_size, expected,
-                   i, result[i], (int)result_size, result);
+                   i, expected[i], (int) expected_size, expected,
+                   i, result[i], (int) result_size, result);
         }
     }
     free(result);
 
     /* Do it again with a provided buffer */
     result_size = 100;
-    rv = b64_encode(opts | B64_PROVIDED, raw, raw_size, &buf, &result_size);
+    rv          = b64_encode(opts | B64_PROVIDED, raw, raw_size, &buf, &result_size);
     CU_ASSERT_EQUAL(expected_rv, rv);
     CU_ASSERT_EQUAL(expected_size, result_size);
     for (size_t i = 0; i < expected_size; i++) {
         CU_ASSERT_EQUAL(buf[i], expected[i]);
-        if (buf[i] != (uint8_t)expected[i]) {
+        if (buf[i] != (uint8_t) expected[i]) {
             printf("Encoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
-                   i, expected[i], (int)expected_size, expected,
-                   i, buf[i], (int)result_size, buf);
+                   i, expected[i], (int) expected_size, expected,
+                   i, buf[i], (int) result_size, buf);
         }
     }
 }
@@ -532,7 +535,7 @@ void test_input_validation()
 {
     size_t len = 9;
     char buf[10];
-    char *b = (char *)&buf;
+    char *b  = (char *) &buf;
     char *in = "randomstring";
 
     CU_ASSERT(-5 == b64_decode(B64_STD, NULL, 0, NULL, NULL));
@@ -546,7 +549,7 @@ void test_input_validation()
     CU_ASSERT(0 == len);
 
     len = 3;
-    CU_ASSERT(-3 == b64_decode(B64_STD | B64_PROVIDED, in, strlen(in), (void **)&b, &len));
+    CU_ASSERT(-3 == b64_decode(B64_STD | B64_PROVIDED, in, strlen(in), (void **) &b, &len));
     CU_ASSERT(0 == len);
 }
 
@@ -566,7 +569,7 @@ void add_suites(CU_pSuite *suite)
 /*----------------------------------------------------------------------------*/
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {

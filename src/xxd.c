@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2008, 2021 Ed Rose, Weston Schmidt */
+/* SPDX-FileCopyrightText: 2008, 2021-2022 Ed Rose, Weston Schmidt */
 /* SPDX-License-Identifier: Apache-2.0 */
 /*
  *  xxd.c - formatted (like xxd) buffer dump
@@ -44,7 +44,7 @@ void xxd(const void *buffer, size_t length, FILE *stream)
 {
     const char hex[17] = "0123456789abcdef";
     char text[16];
-    const char *data = (const char *)buffer;
+    const char *data = (const char *) buffer;
     const char *end;
     size_t line = 0;
 

@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2021-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <stdlib.h>
@@ -46,5 +46,5 @@ void *must(const void *const in)
         __cutils_abort();
     }
 
-    return (void *)in;
+    return (void *) in;
 }
