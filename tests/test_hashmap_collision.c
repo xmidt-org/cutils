@@ -27,20 +27,26 @@ uint32_t hashmap_crc32_helper(const char *const s, const size_t len)
 void test_collision()
 {
     hashmap_t h;
+    const char *list[] = {
+        "000", "one", "two", "333",
+        "444", "555", "six", "777",
+        "888", "999", "aaa", "bbb",
+        "ccc", "ddd", "eee", "fff"
+    };
     int ignored = 0;
 
     CU_ASSERT(0 == hashmap_create(16, &h));
-    CU_ASSERT(0 == hashmap_put(&h, "foo", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "bar", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "goo", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "cat", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "dog", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "dag", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "egg", 3, &ignored));
-    CU_ASSERT(0 == hashmap_put(&h, "axe", 3, &ignored));
-    CU_ASSERT(0 != hashmap_put(&h, "fog", 3, &ignored));
-    CU_ASSERT(NULL != hashmap_get(&h, "axe", 3));
-    CU_ASSERT(NULL == hashmap_get(&h, "fog", 3));
+
+    for (int i = 0; i < 16; i++) {
+        int rv = hashmap_put(&h, list[i], 3, &ignored);
+        if (0 != rv) {
+            CU_ASSERT(0 < i);
+            CU_ASSERT(NULL != hashmap_get(&h, list[i - 1], 3));
+            CU_ASSERT(NULL == hashmap_get(&h, list[i], 3));
+            break;
+        }
+    }
+
     hashmap_destroy(&h);
 }
 
