@@ -40,7 +40,7 @@
 #include "hashmap.h"
 
 #define HASHMAP_MAX_CHAIN_LENGTH (8)
-#define HASHMAP_MAX_SIZE         (size_t)(1 << 31) /* Up to 2G entries work */
+#define HASHMAP_MAX_SIZE         (size_t)(1 << 30) /* Up to 1G entries work */
 #define HASHMAP_DEFAULT_SIZE     (16)
 
 /*----------------------------------------------------------------------------*/
