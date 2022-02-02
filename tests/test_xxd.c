@@ -47,11 +47,11 @@
 #include "xxd.h"
 
 static char out[1000];
-static int index = 0;
+static int idx = 0;
 
 void reset_test(void)
 {
-    index = 0;
+    idx = 0;
     memset(out, 0, sizeof(out));
 }
 
@@ -59,7 +59,7 @@ int fputc(int c, FILE *stream)
 {
     CU_ASSERT(stdout == stream);
 
-    out[index++] = (char) c;
+    out[idx++] = (char) c;
 
     return c;
 }
@@ -116,10 +116,10 @@ void test_xxd(void)
         reset_test();
         xxd(tests[i].in, tests[i].len, stdout);
 #if 0
-        printf("index = %d, len = %zd\n", index, len);
-        printf("got:\n'%.*s'\nwanted:\n'%s'\n", index, out, tests[i].expect);
+        printf("idx = %d, len = %zd\n", idx, len);
+        printf("got:\n'%.*s'\nwanted:\n'%s'\n", idx, out, tests[i].expect);
 #endif
-        CU_ASSERT(index == (int) len);
+        CU_ASSERT(idx == (int) len);
         CU_ASSERT_NSTRING_EQUAL(out, tests[i].expect, tests[i].len);
     }
 }
