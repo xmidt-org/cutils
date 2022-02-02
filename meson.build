@@ -67,8 +67,7 @@ if not meson.is_subproject()
            ['test memory',            'test_memory'],
            ['test printf',            'test_printf'],
            ['test nl_strings',        'test_nl_strings'],
-           ['test strings',           'test_strings'],
-           ['test xxd',               'test_xxd']]
+           ['test strings',           'test_strings']]
 
   foreach test : tests
     test(test[0],
@@ -80,6 +79,16 @@ if not meson.is_subproject()
                     link_with: libcutils))
   endforeach
 
+  # Link this one specially since it needs to include the c file directly
+  test('test xxd',
+       executable('test_xxd', ['tests/test_xxd.c', 'src/xxd.c'],
+                  c_args: ['-D__FPUTC=test_fputc'],
+                  include_directories: inc,
+                  dependencies: cunit_dep,
+                  install: false,
+                  link_args: test_args))
+
+  # Link this one specially since it needs fail
   test('test must',
        executable('test_must', ['tests/test_must.c', 'src/must.c'],
                   include_directories: inc,

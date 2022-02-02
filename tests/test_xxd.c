@@ -55,7 +55,7 @@ void reset_test(void)
     memset(out, 0, sizeof(out));
 }
 
-int fputc(int c, FILE *stream)
+int test_fputc(int c, FILE *stream)
 {
     CU_ASSERT(stdout == stream);
 

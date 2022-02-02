@@ -40,6 +40,13 @@
 
 #include "xxd.h"
 
+/* Provide a way to replace the fputc() function that is more portable. */
+#ifndef __FPUTC
+#define __FPUTC fputc
+#else
+extern int __FPUTC(int c, FILE *stream);
+#endif
+
 void xxd(const void *buffer, size_t length, FILE *stream)
 {
     const char hex[17] = "0123456789abcdef";
@@ -59,20 +66,20 @@ void xxd(const void *buffer, size_t length, FILE *stream)
         char *text_ptr = text;
 
         /* Output the '0000000:' portion */
-        fputc(hex[0x0f & (line >> 24)], stream);
-        fputc(hex[0x0f & (line >> 20)], stream);
-        fputc(hex[0x0f & (line >> 16)], stream);
-        fputc(hex[0x0f & (line >> 12)], stream);
-        fputc(hex[0x0f & (line >> 8)], stream);
-        fputc(hex[0x0f & (line >> 4)], stream);
-        fputc(hex[0x0f & line], stream);
-        fputc(':', stream);
-        fputc(' ', stream);
+        __FPUTC(hex[0x0f & (line >> 24)], stream);
+        __FPUTC(hex[0x0f & (line >> 20)], stream);
+        __FPUTC(hex[0x0f & (line >> 16)], stream);
+        __FPUTC(hex[0x0f & (line >> 12)], stream);
+        __FPUTC(hex[0x0f & (line >> 8)], stream);
+        __FPUTC(hex[0x0f & (line >> 4)], stream);
+        __FPUTC(hex[0x0f & line], stream);
+        __FPUTC(':', stream);
+        __FPUTC(' ', stream);
 
         for (i = 0; i < 16; i++) {
             if (data < end) {
-                fputc(hex[0x0f & (*data >> 4)], stream);
-                fputc(hex[0x0f & (*data)], stream);
+                __FPUTC(hex[0x0f & (*data >> 4)], stream);
+                __FPUTC(hex[0x0f & (*data)], stream);
                 if ((' ' <= *data) && (*data <= '~')) {
                     *text_ptr++ = *data;
                 } else {
@@ -80,20 +87,20 @@ void xxd(const void *buffer, size_t length, FILE *stream)
                 }
                 data++;
             } else {
-                fputc(' ', stream);
-                fputc(' ', stream);
+                __FPUTC(' ', stream);
+                __FPUTC(' ', stream);
                 *text_ptr++ = ' ';
             }
             if (0x01 == (0x01 & i)) {
-                fputc(' ', stream);
+                __FPUTC(' ', stream);
             }
         }
         line += 16;
-        fputc(' ', stream);
+        __FPUTC(' ', stream);
 
         for (i = 0; i < 16; i++) {
-            fputc(text[i], stream);
+            __FPUTC(text[i], stream);
         }
-        fputc('\n', stream);
+        __FPUTC('\n', stream);
     }
 }
