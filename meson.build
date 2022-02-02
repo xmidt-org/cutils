@@ -88,12 +88,14 @@ if not meson.is_subproject()
                   link_args: [test_args, '-D__cutils_abort=__test_abort']),
        should_fail: true)
 
-  add_test_setup('valgrind',
-                 is_default: true,
-                 exe_wrapper: [ 'valgrind',
-                                '--leak-check=full',
-                                '--error-exitcode=1' ],
-                 timeout_multiplier: 2)
+  if host_machine.system().contains('linux')
+    add_test_setup('valgrind',
+                   is_default: true,
+                   exe_wrapper: [ 'valgrind',
+                                  '--leak-check=full',
+                                  '--error-exitcode=1' ],
+                   timeout_multiplier: 2)
+  endif
 endif
 
 ################################################################################
