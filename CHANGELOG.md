@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v2.1.2]
+- Add support for compiling on MacOS.  This needed to include some code portability
+  changes to enable compiling and running tests reliably.
+
 ## [v2.1.1]
 - Fix a number of compiler warnings.
 - Improve the test code to accept the abort() as a successful test.
@@ -44,7 +48,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [v1.0.0]
 - Initial creation
 
-[Unreleased]: https://github.com/xmidt-org/cutils/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/xmidt-org/cutils/compare/v2.1.2...HEAD
+[v2.1.2]: https://github.com/xmidt-org/cutils/compare/v2.1.1...v2.1.2
 [v2.1.1]: https://github.com/xmidt-org/cutils/compare/v2.1.0...v2.1.1
 [v2.1.0]: https://github.com/xmidt-org/cutils/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/xmidt-org/cutils/compare/v1.3.0...v2.0.0
