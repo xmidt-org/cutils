@@ -40,7 +40,10 @@ void *saferealloc(void *ptr, size_t size)
     void *p = NULL;
 
     /* Consistently always return NULL in this case. */
-    if (!ptr && !size) {
+    if (!size) {
+        if (ptr) {
+            free(ptr);
+        }
         return NULL;
     }
 
