@@ -75,6 +75,10 @@ char *mlvaprintf(size_t *len, const char *format, va_list args)
     char *buf = NULL;
     int l;
 
+    if (!format) {
+        return NULL;
+    }
+
     va_copy(copy, args);
     l = vsnprintf(NULL, 0, format, copy);
     va_end(copy);
