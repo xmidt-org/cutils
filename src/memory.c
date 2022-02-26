@@ -49,8 +49,7 @@ void *saferealloc(void *ptr, size_t size)
 
     p = realloc(ptr, size);
 
-    /* If size == 0, ptr has been freed. */
-    if (!p && ptr && (0 < size)) {
+    if (!p && ptr) {
         free(ptr);
     }
 
