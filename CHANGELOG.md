@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Remove a redundant check based on the size.
+
 ## [v2.1.2]
 - Add support for compiling on MacOS.  This needed to include some code portability
   changes to enable compiling and running tests reliably.
